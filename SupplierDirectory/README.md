@@ -5,7 +5,7 @@
 ## التشغيل المحلي
 
 1. عدّل `ConnectionStrings__DefaultConnection` أو `appsettings.json`.
-2. **لا تضع أسراراً في المصدر:** عيّن `Jwt__Key` إلى مفتاح عشوائي طويل و`AdminSeed__Password` إلى كلمة مرور المدير الأولى. البريد الافتراضي هو `admin@admin.com`.
+2. عيّن `Jwt__Key` إلى مفتاح عشوائي طويل. يُنشأ المدير الافتراضي تلقائيًا عند أول تشغيل: `admin@admin.com` / `Admin@123456`.
 3. شغّل `dotnet ef database update` ثم `dotnet run` من مجلد المشروع.
 4. افتح `/login` للوحة الإدارة، و`/swagger` لتجربة الواجهة. استخدم `POST /api/auth/login` للحصول على JWT لإدارة `/api/admin/*`.
 
