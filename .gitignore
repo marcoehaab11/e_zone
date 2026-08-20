@@ -1,6 +1,8 @@
 **/bin/
 **/obj/
 **/.vs/
+**/*.user
+**/Properties/PublishProfiles/
 SupplierDirectory/logs/
 SupplierDirectory/wwwroot/uploads/
 appsettings.*.local.json
