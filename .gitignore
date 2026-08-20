@@ -4,6 +4,7 @@
 **/*.user
 **/Properties/PublishProfiles/
 SupplierDirectory/logs/
+SupplierDirectory/App_Data/
 SupplierDirectory/wwwroot/uploads/
 appsettings.*.local.json
 SupplierDirectory/appsettings.json

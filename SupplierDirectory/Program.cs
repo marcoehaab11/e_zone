@@ -2,6 +2,7 @@ using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,7 +14,8 @@ using SupplierDirectory.Infrastructure;
 Log.Logger = new LoggerConfiguration().WriteTo.Console().WriteTo.File("logs/supplier-.log", rollingInterval: RollingInterval.Day).CreateBootstrapLogger();
 try {
  var builder=WebApplication.CreateBuilder(args); builder.Host.UseSerilog((ctx,_,cfg)=>cfg.ReadFrom.Configuration(ctx.Configuration).WriteTo.Console().WriteTo.File("logs/supplier-.log",rollingInterval:RollingInterval.Day));
- builder.Services.AddDbContext<AppDbContext>(o=>o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+ var dataProtectionPath=Path.Combine(builder.Environment.ContentRootPath,"App_Data","DataProtection-Keys"); Directory.CreateDirectory(dataProtectionPath); builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dataProtectionPath)).SetApplicationName("SupplierDirectory");
+ builder.Services.AddDbContext<AppDbContext>(o=>o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sql=>sql.EnableRetryOnFailure(maxRetryCount:3,maxRetryDelay:TimeSpan.FromSeconds(5),errorNumbersToAdd:null)));
  builder.Services.AddIdentity<ApplicationUser,IdentityRole>(o=> { o.Password.RequiredLength=10; o.Password.RequireDigit=true; o.Password.RequireUppercase=true; o.Password.RequireNonAlphanumeric=true; }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
  var jwt=builder.Configuration.GetSection("Jwt"); var key=jwt["Key"] ?? throw new InvalidOperationException("JWT key is required.");
  builder.Services.AddAuthentication(o=> {o.DefaultAuthenticateScheme=IdentityConstants.ApplicationScheme;o.DefaultChallengeScheme=IdentityConstants.ApplicationScheme;}).AddJwtBearer(o=>o.TokenValidationParameters=new(){ValidateIssuer=true,ValidIssuer=jwt["Issuer"],ValidateAudience=true,ValidAudience=jwt["Audience"],ValidateIssuerSigningKey=true,IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),ValidateLifetime=true});
