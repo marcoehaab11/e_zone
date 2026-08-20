@@ -1,4 +1,0 @@
-using Microsoft.AspNetCore.Identity;
-using SupplierDirectory.Domain;
-namespace SupplierDirectory.Infrastructure;
-public static class SeedData { public static async Task InitializeAsync(IServiceProvider services, IConfiguration config) { var roles=services.GetRequiredService<RoleManager<IdentityRole>>(); if(!await roles.RoleExistsAsync("Admin")) await roles.CreateAsync(new IdentityRole("Admin")); var users=services.GetRequiredService<UserManager<ApplicationUser>>(); var email=config["AdminSeed:Email"]??"admin@admin.com"; var password=config["AdminSeed:Password"]??Environment.GetEnvironmentVariable("ADMIN_SEED_PASSWORD"); if(!string.IsNullOrWhiteSpace(password)&&await users.FindByEmailAsync(email) is null) { var user=new ApplicationUser {UserName=email,Email=email,EmailConfirmed=true}; var created=await users.CreateAsync(user,password); if(created.Succeeded) await users.AddToRoleAsync(user,"Admin"); } } }
