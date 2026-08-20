@@ -25,3 +25,4 @@ try {
  using(var scope=app.Services.CreateScope()) { var db=scope.ServiceProvider.GetRequiredService<AppDbContext>(); await db.Database.MigrateAsync(); await SeedData.InitializeAsync(scope.ServiceProvider,builder.Configuration); } await app.RunAsync();
 } catch(Exception ex) when (ex is not Microsoft.Extensions.Hosting.HostAbortedException) { Log.Fatal(ex,"Application terminated unexpectedly"); } finally { await Log.CloseAndFlushAsync(); }
 
+
