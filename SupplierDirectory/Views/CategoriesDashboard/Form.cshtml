@@ -1,0 +1,44 @@
+@model SupplierDirectory.Domain.Category
+@{
+    var isEdit = Model.Id > 0;
+    ViewData["Title"] = isEdit ? "تعديل التصنيف" : "إضافة تصنيف";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0">@(isEdit ? "تعديل تصنيف" : "إضافة تصنيف جديد")</h3>
+    <a href="/dashboard/categories-list" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-right ms-1"></i>رجوع للقائمة</a>
+</div>
+
+<div class="card border-0 shadow-sm" style="max-width: 600px;">
+    <div class="card-body p-4">
+        <form method="post" action="@(isEdit ? $"/dashboard/categories-list/{Model.Id}/edit" : "/dashboard/categories-list/create")">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label fw-bold">اسم التصنيف <span class="text-danger">*</span></label>
+                <input asp-for="Name" class="form-control" required placeholder="أدخل اسم التصنيف...">
+                <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label fw-bold">الوصف</label>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="وصف إضافي (اختياري)"></textarea>
+                <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+            </div>
+            
+            <div class="mb-4 form-check form-switch">
+                <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch">
+                <label asp-for="IsActive" class="form-check-label fw-bold">التصنيف نشط</label>
+            </div>
+            
+            <hr class="mb-4">
+            
+            <button type="submit" class="btn btn-primary px-4 fw-bold"><i class="fa-solid fa-save ms-1"></i>حفظ البيانات</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

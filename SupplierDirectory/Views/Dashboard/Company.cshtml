@@ -1,2 +1,125 @@
-@model SupplierDirectory.Domain.CompanyInfo
-@{Layout=null;}<html lang="ar" dir="rtl"><head><meta charset="utf-8"><link rel="stylesheet" href="/css/site.css"><title>معلومات الشركة</title></head><body><main class="dashboard"><h1>معلومات الشركة</h1><section class="panel"><p><b>اسم الشركة:</b> @Model.CompanyName</p><p>@Model.About</p></section></main></body></html>
+@model SupplierDirectory.Application.CompanyFormViewModel
+@{
+    ViewData["Title"] = "معلومات الشركة";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0"><i class="fa-solid fa-building me-2"></i>معلومات الشركة والمنصة</h3>
+</div>
+
+<div class="card border-0 shadow-sm mb-5">
+    <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data" action="/dashboard/company">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="Id">
+            <input type="hidden" asp-for="LogoUrl">
+            <input type="hidden" asp-for="CoverImageUrl">
+
+            <div class="row">
+                <!-- Company Basics -->
+                <div class="col-md-6 mb-4">
+                    <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">البيانات الأساسية</h5>
+                    
+                    <div class="mb-3">
+                        <label asp-for="CompanyName" class="form-label fw-bold">اسم الشركة / المنصة</label>
+                        <input asp-for="CompanyName" class="form-control">
+                        <span asp-validation-for="CompanyName" class="text-danger small mt-1 d-block"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">شعار الشركة (Logo)</label>
+                        <input type="file" asp-for="LogoFile" class="form-control" accept="image/*">
+                        <span asp-validation-for="LogoFile" class="text-danger small mt-1 d-block"></span>
+                        @if(!string.IsNullOrEmpty(Model.LogoUrl)) {
+                            <div class="mt-2">
+                                <img src="@Model.LogoUrl" alt="شعار" class="img-thumbnail" style="max-height: 80px;">
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">صورة الغلاف (Cover)</label>
+                        <input type="file" asp-for="CoverFile" class="form-control" accept="image/*">
+                        <span asp-validation-for="CoverFile" class="text-danger small mt-1 d-block"></span>
+                        @if(!string.IsNullOrEmpty(Model.CoverImageUrl)) {
+                            <div class="mt-2">
+                                <img src="@Model.CoverImageUrl" alt="غلاف" class="img-thumbnail" style="max-height: 120px;">
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Contact & Social -->
+                <div class="col-md-6 mb-4">
+                    <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">بيانات التواصل</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ContactPhone" class="form-label fw-bold">الهاتف</label>
+                            <input asp-for="ContactPhone" class="form-control" dir="ltr">
+                            <span asp-validation-for="ContactPhone" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="WhatsApp" class="form-label fw-bold">الواتساب</label>
+                            <input asp-for="WhatsApp" class="form-control" dir="ltr">
+                            <span asp-validation-for="WhatsApp" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-bold">البريد الإلكتروني</label>
+                        <input asp-for="Email" type="email" class="form-control" dir="ltr">
+                        <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Website" class="form-label fw-bold">الموقع الإلكتروني</label>
+                        <input asp-for="Website" type="url" class="form-control" dir="ltr">
+                        <span asp-validation-for="Website" class="text-danger small mt-1 d-block"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <!-- About & Description -->
+                <div class="col-md-12 mb-4">
+                    <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">من نحن ورؤية المنصة</h5>
+                    
+                    <div class="mb-3">
+                        <label asp-for="About" class="form-label fw-bold">عن الشركة</label>
+                        <textarea asp-for="About" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Mission" class="form-label fw-bold">رسالتنا (Mission)</label>
+                            <textarea asp-for="Mission" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Vision" class="form-label fw-bold">رؤيتنا (Vision)</label>
+                            <textarea asp-for="Vision" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PlatformDescription" class="form-label fw-bold">وصف المنصة</label>
+                            <textarea asp-for="PlatformDescription" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PlatformServices" class="form-label fw-bold">خدمات المنصة</label>
+                            <textarea asp-for="PlatformServices" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="mb-4">
+            
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold"><i class="fa-solid fa-save ms-2"></i>حفظ المعلومات</button>
+            </div>
+        </form>
+    </div>
+</div>

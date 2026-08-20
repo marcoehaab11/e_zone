@@ -1,3 +1,117 @@
 @model SupplierDirectory.Application.AreaListViewModel
-@{Layout=null;}
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/css/site.css"><title>إدارة المناطق</title></head><body><aside><h2>دليل الموردين</h2><a href="/">الرئيسية</a><a href="/dashboard/suppliers">الموردون</a><a class="active" href="/dashboard/areas">المناطق</a><a href="/dashboard/categories">التصنيفات</a><a href="/dashboard/advertisements">الإعلانات</a></aside><main class="dashboard"><div class="page-head"><div><h1>إدارة المناطق</h1><p>دولة ← محافظة ← مدينة ← منطقة</p></div><a class="button" href="/dashboard/areas/create">إضافة منطقة</a></div>@if(TempData["Success"] is string success){<p class="notice success">@success</p>}@if(TempData["Error"] is string error){<p class="notice error">@error</p>}<section class="panel"><form class="filters" method="get"><input name="search" value="@Model.Query.Search" placeholder="بحث بالاسم أو الوصف"><select name="parentId"><option value="">كل المستويات</option>@foreach(var p in Model.Parents){<option value="@p.Id" selected="@(Model.Query.ParentId==p.Id)">@p.Name</option>}</select><button>بحث</button></form><table><thead><tr><th>المنطقة</th><th>الأم</th><th>الوصف</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody>@foreach(var x in Model.Items){<tr><td>@x.Name</td><td>@(x.ParentName??"—")</td><td>@x.Description</td><td>@(x.IsActive?"نشطة":"موقوفة")</td><td class="actions"><a href="/dashboard/areas/@x.Id/edit">تعديل</a><form method="post" action="/dashboard/areas/@x.Id/toggle">@Html.AntiForgeryToken()<button>@(x.IsActive?"تعطيل":"تفعيل")</button></form><form method="post" action="/dashboard/areas/@x.Id/delete" onsubmit="return confirm('حذف المنطقة؟')">@Html.AntiForgeryToken()<button>حذف</button></form></td></tr>}</tbody></table><div class="pagination">@for(var pageNumber=1;pageNumber<=Model.TotalPages;pageNumber++){<a href="?page=@pageNumber&amp;pageSize=@Model.Query.PageSize&amp;search=@Model.Query.Search&amp;parentId=@Model.Query.ParentId">@pageNumber</a>}</div></section></main></body></html>
+@{
+    ViewData["Title"] = "إدارة المناطق";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1"><i class="fa-solid fa-map-location-dot me-2"></i>إدارة المناطق</h3>
+        <p class="text-muted mb-0">هيكلة المناطق: دولة ← محافظة ← مدينة ← منطقة</p>
+    </div>
+    <a href="/dashboard/areas/create" class="btn btn-primary"><i class="fa-solid fa-plus ms-1"></i>إضافة منطقة</a>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form class="row g-3" method="get">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input name="search" class="form-control border-start-0" value="@Model.Query.Search" placeholder="بحث بالاسم أو الوصف...">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="parentId" class="form-select">
+                    <option value="">كل المستويات الرئيسية والفرعية</option>
+                    @foreach(var p in Model.Parents) {
+                        if(Model.Query.ParentId == p.Id) {
+                            <option value="@p.Id" selected>@p.Name</option>
+                        } else {
+                            <option value="@p.Id">@p.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-secondary w-100"><i class="fa-solid fa-filter ms-1"></i>تصفية</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">اسم المنطقة</th>
+                        <th>المنطقة الأم</th>
+                        <th>الوصف</th>
+                        <th>الحالة</th>
+                        <th class="text-end pe-4">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Any()) {
+                        foreach(var x in Model.Items) {
+                            <tr>
+                                <td class="ps-4 fw-bold">@x.Name</td>
+                                <td>
+                                    @if(x.ParentName != null) {
+                                        <span class="badge bg-info text-dark">@x.ParentName</span>
+                                    } else {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td class="text-muted text-truncate" style="max-width: 200px;" title="@x.Description">@x.Description</td>
+                                <td>
+                                    @if(x.IsActive) {
+                                        <span class="badge bg-success">نشطة</span>
+                                    } else {
+                                        <span class="badge bg-secondary">موقوفة</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="/dashboard/areas/@x.Id/edit" class="btn btn-sm btn-outline-primary" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        
+                                        <form method="post" action="/dashboard/areas/@x.Id/toggle" class="m-0">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm @(x.IsActive ? "btn-outline-warning" : "btn-outline-success")" title="@(x.IsActive ? "تعطيل" : "تفعيل")">
+                                                <i class="fa-solid @(x.IsActive ? "fa-ban" : "fa-check")"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <form method="post" action="/dashboard/areas/@x.Id/delete" onsubmit="return confirm('هل أنت متأكد من حذف هذه المنطقة؟');" class="m-0">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    } else {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted p-4">لا توجد مناطق لعرضها</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    @if (Model.TotalPages > 1) {
+        <div class="card-footer bg-white p-3">
+            <nav>
+                <ul class="pagination mb-0 justify-content-center">
+                    @for(var p = 1; p <= Model.TotalPages; p++) {
+                        <li class="page-item @(p == Model.Query.Page ? "active" : "")">
+                            <a class="page-link" href="?page=@p&pageSize=@Model.Query.PageSize&search=@Model.Query.Search&parentId=@Model.Query.ParentId">@p</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>

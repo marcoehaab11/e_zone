@@ -1,0 +1,237 @@
+@model SupplierDirectory.Application.SupplierFormViewModel
+@{
+    var isEdit = Model.Id.HasValue;
+    ViewData["Title"] = isEdit ? "تعديل المورد" : "إضافة مورد";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0">@(isEdit ? "تعديل مورد" : "إضافة مورد جديد")</h3>
+    <a href="/dashboard/suppliers" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-right ms-1"></i>رجوع للقائمة</a>
+</div>
+
+<form method="post" enctype="multipart/form-data" action="@(isEdit ? $"/dashboard/suppliers/{Model.Id}/edit" : "/dashboard/suppliers/create")">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <div class="row">
+        <!-- Sidebar Navigation for Form Sections -->
+        <div class="col-md-3 mb-4">
+            <div class="list-group shadow-sm sticky-top supplier-form-nav" style="top: 20px; z-index: 10;">
+                <a href="#basicInfo" class="list-group-item list-group-item-action active fw-bold"><i class="fa-solid fa-circle-info ms-2"></i>البيانات الأساسية</a>
+                <a href="#contactInfo" class="list-group-item list-group-item-action fw-bold"><i class="fa-solid fa-phone ms-2"></i>بيانات التواصل</a>
+                <a href="#locationInfo" class="list-group-item list-group-item-action fw-bold"><i class="fa-solid fa-map-location ms-2"></i>الموقع الجغرافي</a>
+                <a href="#catsAndAreas" class="list-group-item list-group-item-action fw-bold"><i class="fa-solid fa-layer-group ms-2"></i>التصنيفات والمناطق</a>
+                <a href="#imagesGallery" class="list-group-item list-group-item-action fw-bold"><i class="fa-solid fa-images ms-2"></i>معرض الصور</a>
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <div class="col-md-9">
+            
+            <!-- Basic Info -->
+            <div class="card border-0 shadow-sm mb-4" id="basicInfo">
+                <div class="card-header bg-white border-bottom p-3">
+                    <h5 class="mb-0 fw-bold text-primary">البيانات الأساسية</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-bold">اسم المورد <span class="text-danger">*</span></label>
+                        <input asp-for="Name" class="form-control" required placeholder="أدخل اسم المورد...">
+                        <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-bold">الوصف</label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="نبذة عن المورد أو خدماته..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">شعار المورد (Logo)</label>
+                        <input type="file" asp-for="LogoFile" class="form-control" accept="image/*">
+                        <span asp-validation-for="LogoFile" class="text-danger small mt-1 d-block"></span>
+                        @if (!string.IsNullOrEmpty(Model.ExistingLogoUrl)) {
+                            <div class="mt-2">
+                                <img src="@Model.ExistingLogoUrl" alt="شعار المورد الحالي" class="img-thumbnail" style="max-height: 100px;">
+                                <div class="small text-muted mt-1">الشعار الحالي (أضف ملفاً جديداً لاستبداله)</div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="form-check form-switch mt-4">
+                        <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch">
+                        <label asp-for="IsActive" class="form-check-label fw-bold">المورد نشط ويمكن ظهوره في الموقع</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="card border-0 shadow-sm mb-4" id="contactInfo">
+                <div class="card-header bg-white border-bottom p-3">
+                    <h5 class="mb-0 fw-bold text-primary">بيانات التواصل</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PhoneNumber" class="form-label fw-bold">رقم الهاتف الأساسي</label>
+                            <input asp-for="PhoneNumber" class="form-control" dir="ltr" placeholder="مثال: 01xxxxxxxxx">
+                            <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="WhatsAppNumber" class="form-label fw-bold">رقم الواتساب</label>
+                            <input asp-for="WhatsAppNumber" class="form-control" dir="ltr" placeholder="مفتاح الدولة ثم الرقم">
+                            <span asp-validation-for="WhatsAppNumber" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="AdditionalPhoneNumbers" class="form-label fw-bold">أرقام إضافية</label>
+                        <input asp-for="AdditionalPhoneNumbers" class="form-control" placeholder="يمكنك إدخال أكثر من رقم مفصولين بفاصلة">
+                        <span asp-validation-for="AdditionalPhoneNumbers" class="text-danger small mt-1 d-block"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label fw-bold">البريد الإلكتروني</label>
+                            <input asp-for="Email" type="email" class="form-control" dir="ltr" placeholder="email@example.com">
+                            <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Website" class="form-label fw-bold">الموقع الإلكتروني</label>
+                            <input asp-for="Website" type="url" class="form-control" dir="ltr" placeholder="https://www.example.com">
+                            <span asp-validation-for="Website" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Info -->
+            <div class="card border-0 shadow-sm mb-4" id="locationInfo">
+                <div class="card-header bg-white border-bottom p-3">
+                    <h5 class="mb-0 fw-bold text-primary">الموقع الجغرافي (الفرع الأساسي)</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label fw-bold">العنوان التفصيلي</label>
+                        <input asp-for="Address" class="form-control" placeholder="أدخل العنوان المكتوب للفرع الرئيسي">
+                        <span asp-validation-for="Address" class="text-danger small mt-1 d-block"></span>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Latitude" class="form-label fw-bold">خط العرض (Latitude)</label>
+                            <input asp-for="Latitude" type="number" step="any" class="form-control" dir="ltr">
+                            <span asp-validation-for="Latitude" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Longitude" class="form-label fw-bold">خط الطول (Longitude)</label>
+                            <input asp-for="Longitude" type="number" step="any" class="form-control" dir="ltr">
+                            <span asp-validation-for="Longitude" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="GoogleMapsUrl" class="form-label fw-bold">رابط خرائط جوجل</label>
+                        <input asp-for="GoogleMapsUrl" type="url" class="form-control" dir="ltr" placeholder="رابط خرائط جوجل المباشر">
+                        <span asp-validation-for="GoogleMapsUrl" class="text-danger small mt-1 d-block"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories and Areas -->
+            <div class="card border-0 shadow-sm mb-4" id="catsAndAreas">
+                <div class="card-header bg-white border-bottom p-3">
+                    <h5 class="mb-0 fw-bold text-primary">التصنيفات ومناطق الخدمة</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold">التصنيفات (يمكن اختيار أكثر من تصنيف)</label>
+                            <select asp-for="SelectedCategoryIds" class="form-select" multiple size="7">
+                                @foreach(var cat in Model.AvailableCategories) {
+                                    <option value="@cat.Id">@cat.Name</option>
+                                }
+                            </select>
+                            <div class="form-text">اضغط على Ctrl لاختيار أكثر من تصنيف</div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold">مناطق التغطية (يمكن اختيار أكثر من منطقة)</label>
+                            <select asp-for="SelectedAreaIds" class="form-select" multiple size="7">
+                                @foreach(var a in Model.AvailableAreas) {
+                                    <option value="@a.Id">@a.Name</option>
+                                }
+                            </select>
+                            <div class="form-text">اضغط على Ctrl لاختيار أكثر من منطقة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images Gallery -->
+            <div class="card border-0 shadow-sm mb-4" id="imagesGallery">
+                <div class="card-header bg-white border-bottom p-3">
+                    <h5 class="mb-0 fw-bold text-primary">معرض الصور</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">رفع صور جديدة للمورد</label>
+                        <input type="file" asp-for="NewImages" class="form-control" multiple accept="image/*">
+                        <span asp-validation-for="NewImages" class="text-danger small mt-1 d-block"></span>
+                        <div class="form-text">يمكنك تحديد أكثر من صورة لرفعها.</div>
+                    </div>
+
+                    @if (isEdit && Model.ExistingImages.Any()) {
+                        <hr>
+                        <h6 class="fw-bold mb-3">الصور الحالية:</h6>
+                        <div class="row g-3">
+                            @foreach(var img in Model.ExistingImages) {
+                                <div class="col-6 col-md-4 col-lg-3">
+                                    <div class="card h-100 border text-center p-2 position-relative">
+                                        <img src="@img.ImageUrl" class="img-fluid rounded mb-2" style="height: 120px; object-fit: cover;" alt="صورة المورد">
+                                        <button type="button" class="btn btn-sm btn-outline-danger w-100" onclick="deleteImage(@img.Id)"><i class="fa-solid fa-trash ms-1"></i>حذف</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="card border-0 shadow-sm mb-5 bg-light">
+                <div class="card-body p-4 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold"><i class="fa-solid fa-save ms-2"></i>حفظ بيانات المورد</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</form>
+
+@if(isEdit && Model.ExistingImages.Any()) {
+    <form id="deleteImageForm" method="post" class="d-none">
+        @Html.AntiForgeryToken()
+    </form>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Smooth scrolling for sidebar links
+        $('.supplier-form-nav .list-group-item').on('click', function (e) {
+            e.preventDefault();
+            $('.supplier-form-nav .list-group-item').removeClass('active');
+            $(this).addClass('active');
+            var target = $(this).attr('href');
+            $('html, body').animate({
+                scrollTop: $(target).offset().top - 80
+            }, 300);
+        });
+
+        function deleteImage(imageId) {
+            if (confirm('هل أنت متأكد من حذف هذه الصورة؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                var form = $('#deleteImageForm');
+                form.attr('action', '/dashboard/suppliers/@Model.Id/delete-image/' + imageId);
+                form.submit();
+            }
+        }
+    </script>
+}

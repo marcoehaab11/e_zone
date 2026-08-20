@@ -1,0 +1,86 @@
+@model SupplierDirectory.Application.AdvertisementFormViewModel
+@{
+    var isEdit = Model.Id > 0;
+    ViewData["Title"] = isEdit ? "تعديل الإعلان" : "إضافة إعلان";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0">@(isEdit ? "تعديل إعلان" : "إضافة إعلان جديد")</h3>
+    <a href="/dashboard/ads" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-right ms-1"></i>رجوع للقائمة</a>
+</div>
+
+<div class="card border-0 shadow-sm" style="max-width: 800px;">
+    <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data" action="@(isEdit ? $"/dashboard/ads/{Model.Id}/edit" : "/dashboard/ads/create")">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label fw-bold">عنوان الإعلان <span class="text-danger">*</span></label>
+                <input asp-for="Title" class="form-control" required placeholder="أدخل عنوان أو اسم للإعلان...">
+                <span asp-validation-for="Title" class="text-danger small mt-1 d-block"></span>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label fw-bold">الوصف</label>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="وصف إضافي للإعلان (اختياري)"></textarea>
+                <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">صورة الإعلان (بنر)</label>
+                <input type="file" asp-for="ImageFile" class="form-control" accept="image/*">
+                <span asp-validation-for="ImageFile" class="text-danger small mt-1 d-block"></span>
+                @if (!string.IsNullOrEmpty(Model.ImageUrl)) {
+                    <div class="mt-2">
+                        <img src="@Model.ImageUrl" alt="صورة الإعلان الحالية" class="img-thumbnail" style="max-height: 150px;">
+                        <div class="small text-muted mt-1">الصورة الحالية (أضف ملفاً جديداً لاستبدالها)</div>
+                    </div>
+                }
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Link" class="form-label fw-bold">رابط التوجيه (Link)</label>
+                <input asp-for="Link" type="url" class="form-control" dir="ltr" placeholder="https://www.example.com">
+                <span asp-validation-for="Link" class="text-danger small mt-1 d-block"></span>
+                <div class="form-text">الرابط الذي سينتقل إليه المستخدم عند الضغط على الإعلان.</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="StartDate" class="form-label fw-bold">تاريخ بدء العرض</label>
+                    <input asp-for="StartDate" type="date" class="form-control">
+                    <span asp-validation-for="StartDate" class="text-danger small mt-1 d-block"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="EndDate" class="form-label fw-bold">تاريخ انتهاء العرض</label>
+                    <input asp-for="EndDate" type="date" class="form-control">
+                    <span asp-validation-for="EndDate" class="text-danger small mt-1 d-block"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label asp-for="DisplayOrder" class="form-label fw-bold">ترتيب العرض</label>
+                    <input asp-for="DisplayOrder" type="number" class="form-control">
+                    <span asp-validation-for="DisplayOrder" class="text-danger small mt-1 d-block"></span>
+                    <div class="form-text">رقم يحدد أولوية ظهور الإعلان (الأقل يظهر أولاً).</div>
+                </div>
+                <div class="col-md-6 mb-4 d-flex align-items-center mt-3">
+                    <div class="form-check form-switch mt-3">
+                        <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch">
+                        <label asp-for="IsActive" class="form-check-label fw-bold">الإعلان نشط</label>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="mb-4">
+            
+            <button type="submit" class="btn btn-primary px-4 fw-bold"><i class="fa-solid fa-save ms-1"></i>حفظ البيانات</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

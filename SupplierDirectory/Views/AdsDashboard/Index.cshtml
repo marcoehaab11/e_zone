@@ -1,0 +1,124 @@
+@model IEnumerable<SupplierDirectory.Domain.Advertisement>
+@{
+    ViewData["Title"] = "إدارة الإعلانات";
+    var search = ViewBag.Search as string;
+    var pageNum = (int)ViewBag.Page;
+    var totalPages = (int)ViewBag.TotalPages;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0"><i class="fa-solid fa-bullhorn me-2"></i>إدارة الإعلانات</h3>
+    <a href="/dashboard/ads/create" class="btn btn-primary"><i class="fa-solid fa-plus ms-1"></i>إضافة إعلان</a>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-9">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input name="search" class="form-control border-start-0" value="@search" placeholder="بحث بعنوان الإعلان أو الوصف...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-secondary w-100"><i class="fa-solid fa-filter ms-1"></i>تصفية</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">صورة الإعلان</th>
+                        <th>العنوان</th>
+                        <th>تاريخ البدء</th>
+                        <th>تاريخ الانتهاء</th>
+                        <th>الترتيب</th>
+                        <th>الحالة</th>
+                        <th class="text-end pe-4">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any()) {
+                        foreach(var item in Model) {
+                            <tr>
+                                <td class="ps-4">
+                                    @if(!string.IsNullOrEmpty(item.ImageUrl)) {
+                                        <img src="@item.ImageUrl" alt="إعلان" class="rounded border" style="width: 80px; height: 50px; object-fit: cover;">
+                                    } else {
+                                        <div class="rounded bg-light d-flex align-items-center justify-content-center text-secondary border" style="width: 80px; height: 50px;">
+                                            <i class="fa-solid fa-image"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td class="fw-bold">
+                                    @item.Title
+                                    @if(!string.IsNullOrEmpty(item.Link)) {
+                                        <a href="@item.Link" target="_blank" class="ms-1" title="رابط الإعلان"><i class="fa-solid fa-link text-primary"></i></a>
+                                    }
+                                </td>
+                                <td>@(item.StartDate?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                <td>@(item.EndDate?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                <td><span class="badge bg-secondary">@item.DisplayOrder</span></td>
+                                <td>
+                                    @{
+                                        bool isExpired = item.EndDate.HasValue && item.EndDate.Value < DateTime.Today;
+                                        bool isFuture = item.StartDate.HasValue && item.StartDate.Value > DateTime.Today;
+                                    }
+                                    @if(!item.IsActive) {
+                                        <span class="badge bg-danger">موقوف</span>
+                                    } else if (isExpired) {
+                                        <span class="badge bg-warning text-dark">منتهي</span>
+                                    } else if (isFuture) {
+                                        <span class="badge bg-info text-dark">مجدول</span>
+                                    } else {
+                                        <span class="badge bg-success">نشط</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="/dashboard/ads/@item.Id/edit" class="btn btn-sm btn-outline-primary" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        
+                                        <form method="post" action="/dashboard/ads/@item.Id/toggle" class="m-0">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm @(item.IsActive ? "btn-outline-warning" : "btn-outline-success")" title="@(item.IsActive ? "تعطيل" : "تفعيل")">
+                                                <i class="fa-solid @(item.IsActive ? "fa-ban" : "fa-check")"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <form method="post" action="/dashboard/ads/@item.Id/delete" class="m-0" onsubmit="return confirm('هل أنت متأكد من حذف الإعلان؟');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    } else {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted p-4">لا توجد إعلانات لعرضها</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    @if (totalPages > 1) {
+        <div class="card-footer bg-white p-3">
+            <nav>
+                <ul class="pagination mb-0 justify-content-center">
+                    @for(var p = 1; p <= totalPages; p++) {
+                        <li class="page-item @(p == pageNum ? "active" : "")">
+                            <a class="page-link" href="?page=@p&search=@search">@p</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>

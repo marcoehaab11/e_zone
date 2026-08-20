@@ -1,18 +1,103 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SupplierDirectory.Domain;
+using SupplierDirectory.Application;
 using SupplierDirectory.Infrastructure;
+
 namespace SupplierDirectory.Controllers;
-public sealed class ManagementRow { public int Id {get;set;} public string Name {get;set;}=""; public string? Description {get;set;} public bool IsActive {get;set;} public DateTime CreatedAt {get;set;} }
-public sealed class ManagementPost { public string Type {get;set;}=""; public int? Id {get;set;} public string Name {get;set;}=""; public string? Description {get;set;} public bool IsActive {get;set;}=true; }
-[Authorize(Roles="Admin")]
-public sealed class DashboardController(AppDbContext db) : Controller {
- public async Task<IActionResult> Index(){ViewBag.Stats=new { Suppliers=await db.Suppliers.CountAsync(),ActiveSuppliers=await db.Suppliers.CountAsync(x=>x.IsActive),Areas=await db.Areas.CountAsync(),Categories=await db.Categories.CountAsync(),Ads=await db.Advertisements.CountAsync(),ActiveAds=await db.Advertisements.CountAsync(x=>x.IsActive)};ViewBag.Suppliers=await db.Suppliers.OrderByDescending(x=>x.CreatedAt).Take(5).ToListAsync();return View();}
- [HttpGet("dashboard/{type}")] public async Task<IActionResult> Manage(string type){type=type.ToLowerInvariant();ViewBag.Type=type;ViewBag.Title=type switch{"suppliers"=>"الموردون","areas"=>"المناطق","categories"=>"التصنيفات","advertisements"=>"الإعلانات",_=>null};if(ViewBag.Title is null)return NotFound();ViewBag.Rows=type switch{"suppliers"=>await db.Suppliers.Select(x=>new ManagementRow{Id=x.Id,Name=x.Name,Description=x.Description,IsActive=x.IsActive,CreatedAt=x.CreatedAt}).ToListAsync(),"areas"=>await db.Areas.Select(x=>new ManagementRow{Id=x.Id,Name=x.Name,Description=x.Description,IsActive=x.IsActive,CreatedAt=x.CreatedAt}).ToListAsync(),"categories"=>await db.Categories.Select(x=>new ManagementRow{Id=x.Id,Name=x.Name,Description=x.Description,IsActive=x.IsActive,CreatedAt=x.CreatedAt}).ToListAsync(),_=>await db.Advertisements.Select(x=>new ManagementRow{Id=x.Id,Name=x.Title,Description=x.Description,IsActive=x.IsActive,CreatedAt=x.CreatedAt}).ToListAsync()};return View("Manage");}
- [HttpPost("dashboard/manage"),ValidateAntiForgeryToken] public async Task<IActionResult> Save(ManagementPost r){if(string.IsNullOrWhiteSpace(r.Name)){TempData["Error"]="الاسم مطلوب";return RedirectToAction(nameof(Manage),new{type=r.Type});}switch(r.Type){case "suppliers":await Save<Supplier>(r,()=>new Supplier{Name=r.Name,Description=r.Description,IsActive=r.IsActive},x=>{x.Name=r.Name;x.Description=r.Description;x.IsActive=r.IsActive;});break;case "areas":await Save<Area>(r,()=>new Area{Name=r.Name,Description=r.Description,IsActive=r.IsActive},x=>{x.Name=r.Name;x.Description=r.Description;x.IsActive=r.IsActive;});break;case "categories":await Save<Category>(r,()=>new Category{Name=r.Name,Description=r.Description,IsActive=r.IsActive},x=>{x.Name=r.Name;x.Description=r.Description;x.IsActive=r.IsActive;});break;case "advertisements":await Save<Advertisement>(r,()=>new Advertisement{Title=r.Name,Description=r.Description,IsActive=r.IsActive},x=>{x.Title=r.Name;x.Description=r.Description;x.IsActive=r.IsActive;});break;default:return NotFound();}return RedirectToAction(nameof(Manage),new{type=r.Type});}
- [HttpPost("dashboard/manage/delete"),ValidateAntiForgeryToken] public async Task<IActionResult> Delete(string type,int id){switch(type){case "suppliers":await Delete<Supplier>(id);break;case "areas":await Delete<Area>(id);break;case "categories":await Delete<Category>(id);break;case "advertisements":await Delete<Advertisement>(id);break;default:return NotFound();}return RedirectToAction(nameof(Manage),new{type});}
- [HttpGet("dashboard/company")] public async Task<IActionResult> Company()=>View(await db.CompanyInfos.FirstOrDefaultAsync()??new CompanyInfo());
- async Task Save<T>(ManagementPost r,Func<T> create,Action<T> update) where T:AuditableEntity {if(r.Id is int id){var x=await db.Set<T>().FindAsync(id);if(x is null)throw new KeyNotFoundException();update(x);}else db.Set<T>().Add(create());await db.SaveChangesAsync();}
- async Task Delete<T>(int id) where T:AuditableEntity {var x=await db.Set<T>().FindAsync(id);if(x is null)throw new KeyNotFoundException();x.IsDeleted=true;await db.SaveChangesAsync();}
+
+[Authorize(Roles = "Admin")]
+public sealed class DashboardController(AppDbContext db, IFileStorageService fileStorage) : Controller
+{
+    [HttpGet("")]
+    [HttpGet("dashboard")]
+    public async Task<IActionResult> Index()
+    {
+        ViewBag.Stats = new {
+            Suppliers = await db.Suppliers.CountAsync(x => !x.IsDeleted),
+            ActiveSuppliers = await db.Suppliers.CountAsync(x => !x.IsDeleted && x.IsActive),
+            Areas = await db.Areas.CountAsync(x => !x.IsDeleted),
+            Categories = await db.Categories.CountAsync(x => !x.IsDeleted),
+            Ads = await db.Advertisements.CountAsync(x => !x.IsDeleted),
+            ActiveAds = await db.Advertisements.CountAsync(x => !x.IsDeleted && x.IsActive)
+        };
+        ViewBag.Suppliers = await db.Suppliers.Where(x => !x.IsDeleted).OrderByDescending(x => x.CreatedAt).Take(5).ToListAsync();
+        return View();
+    }
+
+    [HttpGet("dashboard/company")]
+    public async Task<IActionResult> Company()
+    {
+        var info = await db.CompanyInfos.FirstOrDefaultAsync() ?? new CompanyInfo();
+        var vm = new CompanyFormViewModel
+        {
+            Id = info.Id,
+            CompanyName = info.CompanyName,
+            LogoUrl = info.LogoUrl,
+            CoverImageUrl = info.CoverImageUrl,
+            ContactPhone = info.ContactPhone,
+            WhatsApp = info.WhatsApp,
+            Email = info.Email,
+            Website = info.Website,
+            About = info.About,
+            Mission = info.Mission,
+            Vision = info.Vision,
+            PlatformDescription = info.PlatformDescription,
+            PlatformServices = info.PlatformServices,
+            SocialLinksJson = info.SocialLinksJson
+        };
+        return View(vm);
+    }
+
+    [HttpPost("dashboard/company")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Company(CompanyFormViewModel model, CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var existing = await db.CompanyInfos.FirstOrDefaultAsync();
+        
+        if (existing == null)
+        {
+            existing = new CompanyInfo();
+            db.CompanyInfos.Add(existing);
+        }
+
+        existing.CompanyName = model.CompanyName?.Trim();
+        existing.About = model.About?.Trim();
+        existing.Mission = model.Mission?.Trim();
+        existing.Vision = model.Vision?.Trim();
+        existing.PlatformDescription = model.PlatformDescription?.Trim();
+        existing.PlatformServices = model.PlatformServices?.Trim();
+        existing.ContactPhone = model.ContactPhone?.Trim();
+        existing.WhatsApp = model.WhatsApp?.Trim();
+        existing.Email = model.Email?.Trim();
+        existing.Website = model.Website?.Trim();
+        existing.SocialLinksJson = model.SocialLinksJson?.Trim(); 
+        existing.UpdatedAt = DateTime.UtcNow;
+
+        if (model.LogoFile != null)
+        {
+            if (!string.IsNullOrEmpty(existing.LogoUrl)) await fileStorage.DeleteAsync(existing.LogoUrl);
+            try { existing.LogoUrl = await fileStorage.SaveImageAsync(model.LogoFile, "company", ct); }
+            catch (Exception ex) { ModelState.AddModelError("LogoFile", ex.Message); return View(model); }
+        }
+
+        if (model.CoverFile != null)
+        {
+            if (!string.IsNullOrEmpty(existing.CoverImageUrl)) await fileStorage.DeleteAsync(existing.CoverImageUrl);
+            try { existing.CoverImageUrl = await fileStorage.SaveImageAsync(model.CoverFile, "company", ct); }
+            catch (Exception ex) { ModelState.AddModelError("CoverFile", ex.Message); return View(model); }
+        }
+
+        await db.SaveChangesAsync(ct);
+        TempData["SuccessMessage"] = "طھظ… طھط­ط¯ظٹط« ظ…ط¹ظ„ظˆظ…ط§طھ ط§ظ„ط´ط±ظƒط© ط¨ظ†ط¬ط§ط­";
+        
+        return RedirectToAction(nameof(Company));
+    }
 }
+

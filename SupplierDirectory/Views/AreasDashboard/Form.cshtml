@@ -1,3 +1,56 @@
 @model SupplierDirectory.Application.AreaFormViewModel
-@{Layout=null;var editing=Model.Id.HasValue;}
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><link rel="stylesheet" href="/css/site.css"><title>@(editing?"تعديل منطقة":"إضافة منطقة")</title></head><body><main class="dashboard"><div class="page-head"><h1>@(editing?"تعديل منطقة":"إضافة منطقة")</h1><a href="/dashboard/areas">رجوع</a></div><section class="panel form-panel"><form method="post" action="@(editing?$"/dashboard/areas/{Model.Id}/edit":"/dashboard/areas/create")">@Html.AntiForgeryToken()<div asp-validation-summary="ModelOnly"></div><label>اسم المنطقة<input asp-for="Name"></label><span asp-validation-for="Name"></span><label>الوصف<textarea asp-for="Description"></textarea></label><label>المنطقة الأم<select asp-for="ParentAreaId"><option value="">مستوى رئيسي</option>@foreach(var p in Model.Parents){<option value="@p.Id">@p.Name</option>}</select></label><label><input asp-for="IsActive"> نشطة</label><button class="button">حفظ</button></form></section></main></body></html>
+@{
+    var editing = Model.Id.HasValue;
+    ViewData["Title"] = editing ? "تعديل منطقة" : "إضافة منطقة";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0">@(editing ? "تعديل منطقة" : "إضافة منطقة جديدة")</h3>
+    <a href="/dashboard/areas" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-right ms-1"></i>رجوع للقائمة</a>
+</div>
+
+<div class="card border-0 shadow-sm" style="max-width: 600px;">
+    <div class="card-body p-4">
+        <form method="post" action="@(editing ? $"/dashboard/areas/{Model.Id}/edit" : "/dashboard/areas/create")">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label fw-bold">اسم المنطقة <span class="text-danger">*</span></label>
+                <input asp-for="Name" class="form-control" placeholder="أدخل اسم المنطقة...">
+                <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label fw-bold">الوصف</label>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="وصف إضافي للمنطقة (اختياري)"></textarea>
+                <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+            </div>
+            
+            <div class="mb-4">
+                <label asp-for="ParentAreaId" class="form-label fw-bold">المنطقة الأم</label>
+                <select asp-for="ParentAreaId" class="form-select">
+                    <option value="">(مستوى رئيسي - بدون منطقة أم)</option>
+                    @foreach(var p in Model.Parents) {
+                        <option value="@p.Id">@p.Name</option>
+                    }
+                </select>
+                <div class="form-text">اختر المنطقة التي تندرج تحتها هذه المنطقة لتكوين الهيكل الهرمي.</div>
+                <span asp-validation-for="ParentAreaId" class="text-danger small mt-1 d-block"></span>
+            </div>
+            
+            <div class="mb-4 form-check form-switch">
+                <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch">
+                <label asp-for="IsActive" class="form-check-label fw-bold">المنطقة نشطة</label>
+            </div>
+            
+            <hr class="mb-4">
+            
+            <button type="submit" class="btn btn-primary px-4 fw-bold"><i class="fa-solid fa-save ms-1"></i>حفظ البيانات</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

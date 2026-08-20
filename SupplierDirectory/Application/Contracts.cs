@@ -10,3 +10,12 @@ public sealed class SupplierRequest { [Required(ErrorMessage="اسم المور�
 public sealed class AdvertisementRequest { [Required(ErrorMessage="العنوان مطلوب")] public string Title {get;set;}=""; public string? Description {get;set;} [Url] public string? Link {get;set;} public DateTime? StartDate {get;set;} public DateTime? EndDate {get;set;} public bool IsActive {get;set;}=true; public int DisplayOrder {get;set;} }
 public sealed class CompanyRequest { public string? CompanyName {get;set;} public string? About {get;set;} public string? Mission {get;set;} public string? Vision {get;set;} public string? PlatformDescription {get;set;} public string? PlatformServices {get;set;} public string? ContactPhone {get;set;} public string? WhatsApp {get;set;} [EmailAddress] public string? Email {get;set;} [Url] public string? Website {get;set;} public string? SocialLinksJson {get;set;} }
 public sealed class LoginRequest { [Required,EmailAddress] public string Email {get;set;}=""; [Required] public string Password {get;set;}=""; }
+
+public sealed record SupplierListDto(int Id, string Name, string? Description, string? LogoUrl, string? PhoneNumber, string? WhatsAppNumber, string? Address, decimal? Latitude, decimal? Longitude, string? GoogleMapsUrl, IEnumerable<string> Categories, IEnumerable<string> Areas);
+
+public sealed record SupplierDetailsDto(int Id, string Name, string? Description, string? LogoUrl, string? PhoneNumber, string? AdditionalPhoneNumbers, string? WhatsAppNumber, string? Email, string? Website, string? Address, decimal? Latitude, decimal? Longitude, string? GoogleMapsUrl, IEnumerable<object> Images, IEnumerable<object> Categories, IEnumerable<object> Areas);
+
+public sealed record AreaDto(int Id, string Name, string? Description, int? ParentAreaId);
+
+public sealed record CategoryDto(int Id, string Name, string? Description, string? ImageUrl);
+
