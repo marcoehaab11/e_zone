@@ -1,0 +1,7 @@
+**/bin/
+**/obj/
+**/.vs/
+SupplierDirectory/logs/
+SupplierDirectory/wwwroot/uploads/
+appsettings.*.local.json
+SupplierDirectory/appsettings.json
