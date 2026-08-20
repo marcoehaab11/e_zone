@@ -1,0 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+namespace SupplierDirectory.Application;
+public sealed class AreaListQuery { public string? Search {get;set;} public int? ParentId {get;set;} [Range(1,int.MaxValue)] public int Page {get;set;}=1; [Range(10,100)] public int PageSize {get;set;}=20; }
+public sealed class AreaListItem { public int Id {get;set;} public string Name {get;set;}=""; public string? Description {get;set;} public string? ParentName {get;set;} public int? ParentAreaId {get;set;} public bool IsActive {get;set;} public DateTime CreatedAt {get;set;} }
+public sealed class AreaListViewModel { public required IReadOnlyList<AreaListItem> Items {get;set;} public required IReadOnlyList<(int Id,string Name)> Parents {get;set;} public required AreaListQuery Query {get;set;} public int TotalCount {get;set;} public int TotalPages => Math.Max(1,(int)Math.Ceiling(TotalCount/(double)Query.PageSize)); }
+public sealed class AreaFormViewModel { public int? Id {get;set;} [Required(ErrorMessage="اسم المنطقة مطلوب")] [StringLength(150)] public string Name {get;set;}=""; [StringLength(1000)] public string? Description {get;set;} public int? ParentAreaId {get;set;} public bool IsActive {get;set;}=true; public IReadOnlyList<(int Id,string Name)> Parents {get;set;}=[]; }
