@@ -68,3 +68,18 @@ public class AdvertisementFormViewModel
     public bool IsActive { get; set; } = true;
     public int DisplayOrder { get; set; }
 }
+public record UserDto(string Id, string Email);
+
+public class UserFormRequest
+{
+    public string? Id { get; set; }
+
+    [Required(ErrorMessage = "البريد الإلكتروني مطلوب")]
+    [EmailAddress(ErrorMessage = "صيغة البريد الإلكتروني غير صحيحة")]
+    public string Email { get; set; } = string.Empty;
+
+    public string? Password { get; set; }
+
+    [Compare("Password", ErrorMessage = "كلمة المرور غير متطابقة")]
+    public string? ConfirmPassword { get; set; }
+}

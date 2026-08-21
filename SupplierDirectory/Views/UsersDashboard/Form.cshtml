@@ -1,0 +1,54 @@
+﻿@model SupplierDirectory.Application.UserFormRequest
+@{ ViewData["Title"] = string.IsNullOrEmpty(Model.Id) ? "إضافة مستخدم" : "تعديل مستخدم"; }
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 text-secondary mb-0">
+        <i class="fa-solid fa-user-plus me-2"></i> @ViewData["Title"]
+    </h2>
+    <a href="/dashboard/users" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
+        <i class="fa-solid fa-arrow-right ms-1"></i> رجوع
+    </a>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 fw-bold"></div>
+            @if(!string.IsNullOrEmpty(Model.Id)) { <input type="hidden" asp-for="Id" /> }
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Email" class="form-label fw-bold">البريد الإلكتروني <span class="text-danger">*</span></label>
+                    <input asp-for="Email" class="form-control" type="email" placeholder="أدخل البريد الإلكتروني (مثل: user@example.com)" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Password" class="form-label fw-bold">كلمة المرور @(string.IsNullOrEmpty(Model.Id) ? "<span class='text-danger'>*</span>" : "(اتركه فارغاً إذا لم ترغب بتغييره)")</label>
+                    <input asp-for="Password" class="form-control" type="password" placeholder="أدخل كلمة المرور" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ConfirmPassword" class="form-label fw-bold">تأكيد كلمة المرور</label>
+                    <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="أعد إدخال كلمة المرور" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <hr class="text-muted my-4" />
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary rounded-pill px-5 py-2 shadow-sm fw-bold">
+                    <i class="fa-solid fa-save ms-1"></i> حفظ البيانات
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
