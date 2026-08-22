@@ -67,6 +67,8 @@ public class AdvertisementFormViewModel
     public DateTime? EndDate { get; set; }
     public bool IsActive { get; set; } = true;
     public int DisplayOrder { get; set; }
+    public int? AreaId { get; set; }
+    public IReadOnlyList<SupplierDirectory.Domain.Area> AvailableAreas { get; set; } = Array.Empty<SupplierDirectory.Domain.Area>();
 }
 public record UserDto(string Id, string Email);
 
@@ -83,3 +85,4 @@ public class UserFormRequest
     [Compare("Password", ErrorMessage = "كلمة المرور غير متطابقة")]
     public string? ConfirmPassword { get; set; }
 }
+

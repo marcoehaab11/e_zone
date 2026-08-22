@@ -59,8 +59,13 @@
                     </div>
 
                     <div class="form-check form-switch mt-4">
-                        <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch">
-                        <label asp-for="IsActive" class="form-check-label fw-bold">المورد نشط ويمكن ظهوره في الموقع</label>
+                        <input asp-for="HasTechnicians" class="form-check-input border-primary" type="checkbox" role="switch">
+                        <label asp-for="HasTechnicians" class="form-check-label fw-bold ms-2">هل المورد يوفر فنيين؟ (عمالة وصيانة)</label>
+                    </div>
+
+                    <div class="form-check form-switch mt-2">
+                        <input asp-for="IsActive" class="form-check-input border-primary" type="checkbox" role="switch">
+                        <label asp-for="IsActive" class="form-check-label fw-bold ms-2">المورد نشط ويمكن ظهوره في الموقع</label>
                     </div>
                 </div>
             </div>
@@ -109,6 +114,11 @@
                     <h5 class="mb-0 fw-bold text-primary">الموقع الجغرافي (الفرع الأساسي)</h5>
                 </div>
                 <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label asp-for="ShortAddress" class="form-label fw-bold">العنوان المختصر (يظهر في القوائم)</label>
+                        <input asp-for="ShortAddress" class="form-control" placeholder="أدخل العنوان المختصر (مثال: المعادي - القاهرة)">
+                        <span asp-validation-for="ShortAddress" class="text-danger small mt-1 d-block"></span>
+                    </div>
                     <div class="mb-3">
                         <label asp-for="Address" class="form-label fw-bold">العنوان التفصيلي</label>
                         <input asp-for="Address" class="form-control" placeholder="أدخل العنوان المكتوب للفرع الرئيسي">
@@ -235,3 +245,4 @@
         }
     </script>
 }
+

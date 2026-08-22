@@ -10,10 +10,15 @@ namespace SupplierDirectory.Controllers;
 [Authorize(Roles = "Admin")]
 public sealed class AdsDashboardController(AppDbContext db, IFileStorageService fileStorage) : Controller
 {
+    private async Task PopulateAvailableAreas(AdvertisementFormViewModel model)
+    {
+        model.AvailableAreas = await db.Areas.AsNoTracking().Where(a => !a.IsDeleted && a.IsActive).OrderBy(a => a.Name).ToListAsync();
+    }
+
     [HttpGet("dashboard/ads")]
     public async Task<IActionResult> Index([FromQuery] string search = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
-        var query = db.Advertisements.AsNoTracking().Where(a => !a.IsDeleted);
+        var query = db.Advertisements.Include(a => a.Area).AsNoTracking().Where(a => !a.IsDeleted);
         
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -35,13 +40,22 @@ public sealed class AdsDashboardController(AppDbContext db, IFileStorageService 
     }
 
     [HttpGet("dashboard/ads/create")]
-    public IActionResult Create() => View("Form", new AdvertisementFormViewModel { StartDate = DateTime.Today, EndDate = DateTime.Today.AddMonths(1) });
+    public async Task<IActionResult> Create()
+    {
+        var model = new AdvertisementFormViewModel { StartDate = DateTime.Today, EndDate = DateTime.Today.AddMonths(1) };
+        await PopulateAvailableAreas(model);
+        return View("Form", model);
+    }
 
     [HttpPost("dashboard/ads/create")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(AdvertisementFormViewModel model, CancellationToken ct)
     {
-        if (!ModelState.IsValid) return View("Form", model);
+        if (!ModelState.IsValid)
+        {
+            await PopulateAvailableAreas(model);
+            return View("Form", model);
+        }
 
         var ad = new Advertisement
         {
@@ -51,18 +65,19 @@ public sealed class AdsDashboardController(AppDbContext db, IFileStorageService 
             StartDate = model.StartDate,
             EndDate = model.EndDate,
             IsActive = model.IsActive,
-            DisplayOrder = model.DisplayOrder
+            DisplayOrder = model.DisplayOrder,
+            AreaId = model.AreaId
         };
 
         if (model.ImageFile != null)
         {
             try { ad.ImageUrl = await fileStorage.SaveImageAsync(model.ImageFile, "advertisements", ct); }
-            catch (Exception ex) { ModelState.AddModelError("ImageFile", ex.Message); return View("Form", model); }
+            catch (Exception ex) { ModelState.AddModelError("ImageFile", ex.Message); await PopulateAvailableAreas(model); return View("Form", model); }
         }
 
         db.Advertisements.Add(ad);
         await db.SaveChangesAsync(ct);
-        TempData["SuccessMessage"] = "طھظ…طھ ط¥ط¶ط§ظپط© ط§ظ„ط¥ط¹ظ„ط§ظ† ط¨ظ†ط¬ط§ط­";
+        TempData["SuccessMessage"] = "تمت إضافة الإعلان بنجاح";
         return RedirectToAction(nameof(Index));
     }
 
@@ -81,8 +96,10 @@ public sealed class AdsDashboardController(AppDbContext db, IFileStorageService 
             EndDate = ad.EndDate,
             IsActive = ad.IsActive,
             DisplayOrder = ad.DisplayOrder,
-            ImageUrl = ad.ImageUrl
+            ImageUrl = ad.ImageUrl,
+            AreaId = ad.AreaId
         };
+        await PopulateAvailableAreas(vm);
         return View("Form", vm);
     }
 
@@ -90,7 +107,11 @@ public sealed class AdsDashboardController(AppDbContext db, IFileStorageService 
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, AdvertisementFormViewModel model, CancellationToken ct)
     {
-        if (!ModelState.IsValid) return View("Form", model);
+        if (!ModelState.IsValid)
+        {
+            await PopulateAvailableAreas(model);
+            return View("Form", model);
+        }
         
         var ad = await db.Advertisements.FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
         if (ad == null) return NotFound();
@@ -102,17 +123,18 @@ public sealed class AdsDashboardController(AppDbContext db, IFileStorageService 
         ad.EndDate = model.EndDate;
         ad.IsActive = model.IsActive;
         ad.DisplayOrder = model.DisplayOrder;
+        ad.AreaId = model.AreaId;
         ad.UpdatedAt = DateTime.UtcNow;
 
         if (model.ImageFile != null)
         {
             if (!string.IsNullOrEmpty(ad.ImageUrl)) await fileStorage.DeleteAsync(ad.ImageUrl);
             try { ad.ImageUrl = await fileStorage.SaveImageAsync(model.ImageFile, "advertisements", ct); }
-            catch (Exception ex) { ModelState.AddModelError("ImageFile", ex.Message); return View("Form", model); }
+            catch (Exception ex) { ModelState.AddModelError("ImageFile", ex.Message); await PopulateAvailableAreas(model); return View("Form", model); }
         }
         
         await db.SaveChangesAsync(ct);
-        TempData["SuccessMessage"] = "طھظ… طھط¹ط¯ظٹظ„ ط§ظ„ط¥ط¹ظ„ط§ظ† ط¨ظ†ط¬ط§ط­";
+        TempData["SuccessMessage"] = "تم تعديل الإعلان بنجاح";
         return RedirectToAction(nameof(Index));
     }
 
@@ -135,8 +157,7 @@ public sealed class AdsDashboardController(AppDbContext db, IFileStorageService 
         if (ad == null) return NotFound();
         ad.IsDeleted = true;
         await db.SaveChangesAsync();
-        TempData["SuccessMessage"] = "طھظ… ط­ط°ظپ ط§ظ„ط¥ط¹ظ„ط§ظ† ط¨ظ†ط¬ط§ط­";
+        TempData["SuccessMessage"] = "تم حذف الإعلان بنجاح";
         return RedirectToAction(nameof(Index));
     }
 }
-

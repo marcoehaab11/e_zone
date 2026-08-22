@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SupplierDirectory.Infrastructure;
 
@@ -11,9 +12,11 @@ using SupplierDirectory.Infrastructure;
 namespace SupplierDirectory.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260822052257_AddSupplierTechniciansAndShortAddress")]
+    partial class AddSupplierTechniciansAndShortAddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,9 +166,6 @@ namespace SupplierDirectory.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AreaId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -201,8 +201,6 @@ namespace SupplierDirectory.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AreaId");
 
                     b.HasIndex("IsActive", "StartDate", "EndDate");
 
@@ -522,9 +520,6 @@ namespace SupplierDirectory.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AreaId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -545,8 +540,6 @@ namespace SupplierDirectory.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AreaId");
 
                     b.HasIndex("SupplierId");
 
@@ -604,15 +597,6 @@ namespace SupplierDirectory.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SupplierDirectory.Domain.Advertisement", b =>
-                {
-                    b.HasOne("SupplierDirectory.Domain.Area", "Area")
-                        .WithMany()
-                        .HasForeignKey("AreaId");
-
-                    b.Navigation("Area");
-                });
-
             modelBuilder.Entity("SupplierDirectory.Domain.Area", b =>
                 {
                     b.HasOne("SupplierDirectory.Domain.Area", "ParentArea")
@@ -663,17 +647,11 @@ namespace SupplierDirectory.Infrastructure.Migrations
 
             modelBuilder.Entity("SupplierDirectory.Domain.SupplierImage", b =>
                 {
-                    b.HasOne("SupplierDirectory.Domain.Area", "Area")
-                        .WithMany()
-                        .HasForeignKey("AreaId");
-
                     b.HasOne("SupplierDirectory.Domain.Supplier", "Supplier")
                         .WithMany("Images")
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Area");
 
                     b.Navigation("Supplier");
                 });

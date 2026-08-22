@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 namespace SupplierDirectory.Application;
 public sealed record ApiResponse<T>(bool Success, string Message, T? Data, object? Pagination = null);
 public sealed record PageResult<T>(IReadOnlyList<T> Items, int CurrentPage, int PageSize, int TotalCount) { public object Meta => new { currentPage=CurrentPage,pageSize=PageSize,totalCount=TotalCount,totalPages=(int)Math.Ceiling(TotalCount/(double)PageSize),hasNext=CurrentPage*PageSize<TotalCount,hasPrevious=CurrentPage>1 }; }
@@ -11,11 +11,12 @@ public sealed class AdvertisementRequest { [Required(ErrorMessage="العنوا�
 public sealed class CompanyRequest { public string? CompanyName {get;set;} public string? About {get;set;} public string? Mission {get;set;} public string? Vision {get;set;} public string? PlatformDescription {get;set;} public string? PlatformServices {get;set;} public string? ContactPhone {get;set;} public string? WhatsApp {get;set;} [EmailAddress] public string? Email {get;set;} [Url] public string? Website {get;set;} public string? SocialLinksJson {get;set;} }
 public sealed class LoginRequest { [Required,EmailAddress] public string Email {get;set;}=""; [Required] public string Password {get;set;}=""; }
 
-public sealed record SupplierListDto(int Id, string Name, string? Description, string? LogoUrl, string? PhoneNumber, string? WhatsAppNumber, string? Address, decimal? Latitude, decimal? Longitude, string? GoogleMapsUrl, IEnumerable<string> Categories, IEnumerable<string> Areas);
+public sealed record SupplierListDto(int Id, string Name, string? Description, string? LogoUrl, string? PhoneNumber, string? WhatsAppNumber, string? Address, string? ShortAddress, bool HasTechnicians, decimal? Latitude, decimal? Longitude, string? GoogleMapsUrl, IEnumerable<string> Categories, IEnumerable<string> Areas);
 
-public sealed record SupplierDetailsDto(int Id, string Name, string? Description, string? LogoUrl, string? PhoneNumber, string? AdditionalPhoneNumbers, string? WhatsAppNumber, string? Email, string? Website, string? Address, decimal? Latitude, decimal? Longitude, string? GoogleMapsUrl, IEnumerable<object> Images, IEnumerable<object> Categories, IEnumerable<object> Areas);
+public sealed record SupplierDetailsDto(int Id, string Name, string? Description, string? LogoUrl, string? PhoneNumber, string? AdditionalPhoneNumbers, string? WhatsAppNumber, string? Email, string? Website, string? Address, string? ShortAddress, bool HasTechnicians, decimal? Latitude, decimal? Longitude, string? GoogleMapsUrl, IEnumerable<object> Images, IEnumerable<object> Categories, IEnumerable<object> Areas);
 
 public sealed record AreaDto(int Id, string Name, string? Description, int? ParentAreaId);
 
 public sealed record CategoryDto(int Id, string Name, string? Description, string? ImageUrl);
+
 

@@ -64,6 +64,11 @@ public class SupplierFormViewModel
     [StringLength(300, ErrorMessage = "العنوان يجب ألا يتجاوز 300 حرف")]
     public string? Address { get; set; }
     
+    [StringLength(100, ErrorMessage = "العنوان المختصر يجب ألا يتجاوز 100 حرف")]
+    public string? ShortAddress { get; set; }
+    
+    public bool HasTechnicians { get; set; }
+    
     [Range(-90, 90, ErrorMessage = "خط العرض يجب أن يكون بين -90 و 90")]
     public decimal? Latitude { get; set; }
     

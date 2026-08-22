@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SupplierDirectory.Application;
@@ -88,6 +88,8 @@ public sealed class SuppliersDashboardController(AppDbContext db, IFileStorageSe
             Email = model.Email?.Trim(),
             Website = model.Website?.Trim(),
             Address = model.Address?.Trim(),
+            ShortAddress = model.ShortAddress?.Trim(),
+            HasTechnicians = model.HasTechnicians,
             Latitude = model.Latitude,
             Longitude = model.Longitude,
             GoogleMapsUrl = model.GoogleMapsUrl?.Trim(),
@@ -154,7 +156,7 @@ public sealed class SuppliersDashboardController(AppDbContext db, IFileStorageSe
             WhatsAppNumber = supplier.WhatsAppNumber,
             Email = supplier.Email,
             Website = supplier.Website,
-            Address = supplier.Address,
+            Address = supplier.Address, ShortAddress = supplier.ShortAddress, HasTechnicians = supplier.HasTechnicians,
             Latitude = supplier.Latitude,
             Longitude = supplier.Longitude,
             GoogleMapsUrl = supplier.GoogleMapsUrl,
@@ -199,6 +201,8 @@ public sealed class SuppliersDashboardController(AppDbContext db, IFileStorageSe
         supplier.Email = model.Email?.Trim();
         supplier.Website = model.Website?.Trim();
         supplier.Address = model.Address?.Trim();
+        supplier.ShortAddress = model.ShortAddress?.Trim();
+        supplier.HasTechnicians = model.HasTechnicians;
         supplier.Latitude = model.Latitude;
         supplier.Longitude = model.Longitude;
         supplier.GoogleMapsUrl = model.GoogleMapsUrl?.Trim();
@@ -283,3 +287,5 @@ public sealed class SuppliersDashboardController(AppDbContext db, IFileStorageSe
         return RedirectToAction(nameof(Index));
     }
 }
+
+

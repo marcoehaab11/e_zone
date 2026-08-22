@@ -1,4 +1,4 @@
-@model SupplierDirectory.Application.AdvertisementFormViewModel
+﻿@model SupplierDirectory.Application.AdvertisementFormViewModel
 @{
     var isEdit = Model.Id > 0;
     ViewData["Title"] = isEdit ? "تعديل الإعلان" : "إضافة إعلان";
@@ -60,6 +60,16 @@
             </div>
 
             <div class="row">
+                                <div class="col-md-6 mb-4">
+                    <label asp-for="AreaId" class="form-label fw-bold">المنطقة (اختياري)</label>
+                    <select asp-for="AreaId" class="form-select">
+                        <option value="">كل المناطق (إعلان عام)</option>
+                        @foreach(var area in Model.AvailableAreas) {
+                            <option value="@area.Id">@area.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="AreaId" class="text-danger small"></span>
+                </div>
                 <div class="col-md-6 mb-4">
                     <label asp-for="DisplayOrder" class="form-label fw-bold">ترتيب العرض</label>
                     <input asp-for="DisplayOrder" type="number" class="form-control">
@@ -84,3 +94,5 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+
