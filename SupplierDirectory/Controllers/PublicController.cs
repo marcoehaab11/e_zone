@@ -44,8 +44,48 @@ public sealed class PublicController(AppDbContext db) : ControllerBase {
         return Ok(new ApiResponse<object>(true, "تم الاسترجاع", results));
     }
  [HttpGet("company")] public async Task<IActionResult> Company()=>Ok(new ApiResponse<object>(true,"طھظ… ط§ظ„ط§ط³طھط±ط¬ط§ط¹",await db.CompanyInfos.AsNoTracking().FirstOrDefaultAsync()));
- async Task<IActionResult> Page<T>(IQueryable<T> query,PageQuery q){var total=await query.CountAsync();var items=await query.Skip((q.Page-1)*q.PageSize).Take(q.PageSize).ToListAsync();var p=new PageResult<T>(items,q.Page,q.PageSize,total);return Ok(new ApiResponse<object>(true,"طھظ… ط§ط³طھط±ط¬ط§ط¹ ط§ظ„ط¨ظٹط§ظ†ط§طھ",p.Items,p.Meta));}
+     [HttpGet("products")]
+    public async Task<IActionResult> Products([FromQuery] PageQuery q, [FromQuery] int? areaId)
+    {
+        var query = db.Products.AsNoTracking().Where(x => x.IsActive && !x.IsDeleted);
+        
+        if (!string.IsNullOrWhiteSpace(q.Search))
+            query = query.Where(x => x.Name.Contains(q.Search) || (x.Description != null && x.Description.Contains(q.Search)));
+            
+        if (areaId.HasValue)
+            query = query.Where(x => x.AreaId == null || x.AreaId == areaId);
+
+        var total = await query.CountAsync();
+        var items = await query.OrderBy(x => x.Name)
+            .Skip((q.Page - 1) * q.PageSize)
+            .Take(q.PageSize)
+            .Select(x => new ProductDto(
+                x.Id, x.Name, x.Description, x.Details, x.AreaId, 
+                x.Area != null ? x.Area.Name : null, 
+                x.Images.OrderBy(i => i.DisplayOrder).Select(i => new { i.Id, i.ImageUrl, i.DisplayOrder })
+            )).ToListAsync();
+
+        var p = new PageResult<ProductDto>(items, q.Page, q.PageSize, total);
+        return Ok(new ApiResponse<object>(true, "تم استرجاع البيانات", p.Items, p.Meta));
+    }
+
+    [HttpGet("products/{id:int}")]
+    public async Task<IActionResult> Product(int id)
+    {
+        var item = await db.Products.AsNoTracking().Where(x => x.Id == id && x.IsActive && !x.IsDeleted)
+            .Select(x => new ProductDto(
+                x.Id, x.Name, x.Description, x.Details, x.AreaId, 
+                x.Area != null ? x.Area.Name : null, 
+                x.Images.OrderBy(i => i.DisplayOrder).Select(i => new { i.Id, i.ImageUrl, i.DisplayOrder })
+            )).FirstOrDefaultAsync();
+
+        if (item == null) return NotFound(new ApiResponse<object>(false, "المنتج غير موجود", null));
+        return Ok(new ApiResponse<object>(true, "تم الاسترجاع", item));
+    }
+
+    async Task<IActionResult> Page<T>(IQueryable<T> query,PageQuery q){var total=await query.CountAsync();var items=await query.Skip((q.Page-1)*q.PageSize).Take(q.PageSize).ToListAsync();var p=new PageResult<T>(items,q.Page,q.PageSize,total);return Ok(new ApiResponse<object>(true,"طھظ… ط§ط³طھط±ط¬ط§ط¹ ط§ظ„ط¨ظٹط§ظ†ط§طھ",p.Items,p.Meta));}
 }
+
 
 
 

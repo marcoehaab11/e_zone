@@ -20,3 +20,5 @@ public sealed record AreaDto(int Id, string Name, string? Description, int? Pare
 public sealed record CategoryDto(int Id, string Name, string? Description, string? ImageUrl);
 
 
+
+public sealed record ProductDto(int Id, string Name, string? Description, string? Details, int? AreaId, string? AreaName, IEnumerable<object> Images);

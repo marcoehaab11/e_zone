@@ -1,0 +1,89 @@
+﻿@model SupplierDirectory.Application.ProductFormViewModel
+@{ ViewData["Title"] = Model.Id.HasValue ? "تعديل المنتج" : "إضافة منتج"; }
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 text-secondary mb-0"><i class="fa-solid fa-box-open me-2"></i> @ViewData["Title"]</h2>
+    <a href="/dashboard/products" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">رجوع</a>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    @if (Model.Id.HasValue) { <input type="hidden" asp-for="Id" /> }
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body p-4">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Name" class="form-label fw-bold">اسم المنتج <span class="text-danger">*</span></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="AreaId" class="form-label fw-bold">المنطقة (اختياري)</label>
+                    <select asp-for="AreaId" class="form-select">
+                        <option value="">عام (متوفر في كل المناطق)</option>
+                        @foreach(var area in Model.AvailableAreas) {
+                            <option value="@area.Id">@area.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="AreaId" class="text-danger small mt-1 d-block"></span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label fw-bold">وصف قصير</label>
+                <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+                <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Details" class="form-label fw-bold">تفاصيل ومعلومات إضافية</label>
+                <textarea asp-for="Details" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Details" class="text-danger small mt-1 d-block"></span>
+            </div>
+            <div class="form-check form-switch mt-4">
+                <input asp-for="IsActive" class="form-check-input border-primary" type="checkbox" role="switch">
+                <label asp-for="IsActive" class="form-check-label fw-bold ms-2">المنتج نشط ومتاح للعرض</label>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-header bg-white border-bottom p-3">
+            <h5 class="mb-0 fw-bold text-primary">صور المنتج</h5>
+        </div>
+        <div class="card-body p-4">
+            <div class="mb-4">
+                <label asp-for="NewImages" class="form-label fw-bold">رفع صور جديدة (يمكنك اختيار أكثر من صورة)</label>
+                <input type="file" asp-for="NewImages" class="form-control" multiple accept="image/*">
+                <span asp-validation-for="NewImages" class="text-danger small mt-1 d-block"></span>
+            </div>
+            @if (Model.ExistingImages.Any()) {
+                <h6 class="fw-bold mb-3">الصور الحالية:</h6>
+                <div class="row g-3">
+                    @foreach(var img in Model.ExistingImages) {
+                        <div class="col-6 col-md-3 col-lg-2 text-center" id="img-@img.Id">
+                            <div class="position-relative d-inline-block border rounded p-1">
+                                <img src="@img.ImageUrl" class="img-fluid rounded" style="height:100px; object-fit:cover;">
+                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 start-0 translate-middle rounded-circle shadow" onclick="deleteImg(@Model.Id, @img.Id)"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div class="text-end pb-5">
+        <button type="submit" class="btn btn-primary rounded-pill px-5 shadow-sm fw-bold"><i class="fa-solid fa-save ms-1"></i> حفظ المنتج</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function deleteImg(prodId, imgId) {
+            if(!confirm('هل أنت متأكد من حذف هذه الصورة؟')) return;
+            fetch(/dashboard/products/ + prodId + /delete-image/ + imgId, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value }
+            }).then(r => { if(r.ok) document.getElementById('img-' + imgId).remove(); else alert('حدث خطأ'); });
+        }
+    </script>
+}

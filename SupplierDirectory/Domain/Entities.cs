@@ -13,3 +13,23 @@ public sealed class Advertisement : AuditableEntity { public required string Tit
 public sealed class CompanyInfo : AuditableEntity { public string? CompanyName { get; set; } public string? LogoUrl { get; set; } public string? CoverImageUrl { get; set; } public string? About { get; set; } public string? Mission { get; set; } public string? Vision { get; set; } public string? PlatformDescription { get; set; } public string? PlatformServices { get; set; } public string? ContactPhone { get; set; } public string? WhatsApp { get; set; } public string? Email { get; set; } public string? Website { get; set; } public string? SocialLinksJson { get; set; } }
 
 
+
+public sealed class Product : AuditableEntity
+{
+    public required string Name { get; set; }
+    public string? Description { get; set; }
+    public string? Details { get; set; }
+    public int? AreaId { get; set; }
+    public Area? Area { get; set; }
+    public bool IsActive { get; set; } = true;
+    
+    public ICollection<ProductImage> Images { get; set; } = [];
+}
+
+public sealed class ProductImage : AuditableEntity
+{
+    public int ProductId { get; set; }
+    public Product Product { get; set; } = null!;
+    public required string ImageUrl { get; set; }
+    public int DisplayOrder { get; set; }
+}
