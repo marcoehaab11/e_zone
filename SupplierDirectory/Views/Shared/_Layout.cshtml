@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8" />
@@ -70,7 +70,7 @@
                     <span><i class="fa-solid fa-box-open"></i> المنتجات</span>
                     <i class="fa-solid fa-chevron-down small"></i>
                 </a>
-                <div class="collapse list-group-submenu bg-light" id="productsSubmenu">
+                <div class="collapse sidebar-submenu" id="productsSubmenu" data-bs-parent="#sidebarMenu">
                     <a href="/dashboard/products" class="list-group-item sidebar-link">قائمة المنتجات</a>
                     <a href="/dashboard/products/create" class="list-group-item sidebar-link">إضافة منتج</a>
                 </div>
@@ -187,6 +187,7 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
 
 
 
