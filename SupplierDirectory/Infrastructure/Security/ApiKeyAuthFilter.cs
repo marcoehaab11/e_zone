@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace SupplierDirectory.Infrastructure.Security;
@@ -6,7 +6,7 @@ namespace SupplierDirectory.Infrastructure.Security;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class ApiKeyAuthAttribute : Attribute, IAsyncActionFilter
 {
-    private const string ApiKeyHeaderName = "x-api-key";
+    private const string ApiKeyHeaderName = "MobileApiKey";
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {

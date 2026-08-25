@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SupplierDirectory.Domain;
@@ -95,7 +95,7 @@ public sealed class DashboardController(AppDbContext db, IFileStorageService fil
         }
 
         await db.SaveChangesAsync(ct);
-        TempData["SuccessMessage"] = "طھظ… طھط­ط¯ظٹط« ظ…ط¹ظ„ظˆظ…ط§طھ ط§ظ„ط´ط±ظƒط© ط¨ظ†ط¬ط§ط­";
+        TempData["SuccessMessage"] = "تم تحديث معلومات الشركة بنجاح";
         
         return RedirectToAction(nameof(Company));
     }
