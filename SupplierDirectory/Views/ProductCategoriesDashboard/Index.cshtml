@@ -1,14 +1,14 @@
-﻿@model SupplierDirectory.Application.CategoryListViewModel
+﻿@model SupplierDirectory.Application.ProductCategoryListViewModel
 @{
-    ViewData["Title"] = "إدارة تصنيفات الموردين";
+    ViewData["Title"] = "إدارة تصنيفات المنتجات";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h3 class="fw-bold mb-1"><i class="fa-solid fa-layer-group text-primary me-2"></i>إدارة تصنيفات الموردين</h3>
-        <p class="text-muted small mb-0">تنظيم وهيكلة مجالات وتصنيفات الموردين الرئيسية والفرعية</p>
+        <h3 class="fw-bold mb-1"><i class="fa-solid fa-tags text-primary me-2"></i>إدارة تصنيفات المنتجات</h3>
+        <p class="text-muted small mb-0">تنظيم وهيكلة تصنيفات وأقسام المنتجات الرئيسية والفرعية</p>
     </div>
-    <a href="/dashboard/categories-list/create" class="btn btn-primary"><i class="fa-solid fa-plus ms-1"></i>إضافة تصنيف جديد</a>
+    <a href="/dashboard/product-categories/create" class="btn btn-primary"><i class="fa-solid fa-plus ms-1"></i>إضافة تصنيف منتج</a>
 </div>
 
 <div class="card border-0 shadow-sm mb-4">
@@ -17,7 +17,7 @@
             <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input name="Search" class="form-control border-start-0" value="@Model.Query.Search" placeholder="بحث باسم التصنيف أو الوصف...">
+                    <input name="Search" class="form-control border-start-0" value="@Model.Query.Search" placeholder="بحث باسم تصنيف المنتج أو الوصف...">
                 </div>
             </div>
             <div class="col-md-4">
@@ -34,7 +34,7 @@
                 <button type="submit" class="btn btn-secondary w-100"><i class="fa-solid fa-filter ms-1"></i>تصفية</button>
                 @if (!string.IsNullOrWhiteSpace(Model.Query.Search) || Model.Query.ParentId.HasValue)
                 {
-                    <a href="/dashboard/categories-list" class="btn btn-outline-secondary" title="إعادة تعيين"><i class="fa-solid fa-rotate-left"></i></a>
+                    <a href="/dashboard/product-categories" class="btn btn-outline-secondary" title="إعادة تعيين"><i class="fa-solid fa-rotate-left"></i></a>
                 }
             </div>
         </form>
@@ -50,7 +50,7 @@
                         <th class="ps-4" style="width: 80px;">الصورة</th>
                         <th>اسم التصنيف</th>
                         <th>المستوى</th>
-                        <th>الموردين</th>
+                        <th>المنتجات</th>
                         <th>الوصف</th>
                         <th>الحالة</th>
                         <th class="text-end pe-4">إجراءات</th>
@@ -70,7 +70,7 @@
                                     else
                                     {
                                         <div class="rounded bg-light text-muted d-flex align-items-center justify-content-center border" style="width: 48px; height: 48px;">
-                                            <i class="fa-solid fa-image fa-lg opacity-50"></i>
+                                            <i class="fa-solid fa-tag fa-lg opacity-50"></i>
                                         </div>
                                     }
                                 </td>
@@ -98,7 +98,7 @@
                                 </td>
                                 <td>
                                     <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">
-                                        <i class="fa-solid fa-users me-1"></i>@item.SuppliersCount مورد
+                                        <i class="fa-solid fa-box-open me-1"></i>@item.ProductsCount منتج
                                     </span>
                                 </td>
                                 <td>
@@ -118,16 +118,16 @@
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
-                                        <a href="/dashboard/categories-list/@item.Id/edit" class="btn btn-sm btn-outline-primary" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <a href="/dashboard/product-categories/@item.Id/edit" class="btn btn-sm btn-outline-primary" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></a>
                                         
-                                        <form method="post" action="/dashboard/categories-list/@item.Id/toggle" class="m-0">
+                                        <form method="post" action="/dashboard/product-categories/@item.Id/toggle" class="m-0">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="btn btn-sm @(item.IsActive ? "btn-outline-warning" : "btn-outline-success")" title="@(item.IsActive ? "تعطيل" : "تفعيل")">
                                                 <i class="fa-solid @(item.IsActive ? "fa-ban" : "fa-check")"></i>
                                             </button>
                                         </form>
                                         
-                                        <form method="post" action="/dashboard/categories-list/@item.Id/delete" class="m-0" onsubmit="return confirm('هل أنت متأكد من حذف هذا التصنيف؟');">
+                                        <form method="post" action="/dashboard/product-categories/@item.Id/delete" class="m-0" onsubmit="return confirm('هل أنت متأكد من حذف هذا التصنيف؟');">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف"><i class="fa-solid fa-trash"></i></button>
                                         </form>
@@ -140,8 +140,8 @@
                     {
                         <tr>
                             <td colspan="7" class="text-center text-muted p-5">
-                                <i class="fa-solid fa-folder-open fs-2 mb-2 d-block opacity-50"></i>
-                                لا توجد تصنيفات مطابقة للبحث
+                                <i class="fa-solid fa-box-open fs-2 mb-2 d-block opacity-50"></i>
+                                لا توجد تصنيفات منتجات مطابقة للبحث
                             </td>
                         </tr>
                     }

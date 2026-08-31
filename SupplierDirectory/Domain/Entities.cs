@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace SupplierDirectory.Domain;
 public abstract class AuditableEntity { public int Id { get; set; } public bool IsDeleted { get; set; } public DateTime CreatedAt { get; set; } = DateTime.UtcNow; public DateTime? UpdatedAt { get; set; } }
 public sealed class ApplicationUser : IdentityUser { }
 public sealed class Area : AuditableEntity { public required string Name { get; set; } public string? Description { get; set; } public int? ParentAreaId { get; set; } public Area? ParentArea { get; set; } public ICollection<Area> Children { get; set; } = []; public bool IsActive { get; set; } = true; public ICollection<SupplierArea> SupplierAreas { get; set; } = []; }
-public sealed class Category : AuditableEntity { public required string Name { get; set; } public string? Description { get; set; } public string? ImageUrl { get; set; } public bool IsActive { get; set; } = true; public ICollection<SupplierCategory> SupplierCategories { get; set; } = []; }
+public sealed class Category : AuditableEntity { public required string Name { get; set; } public string? Description { get; set; } public string? ImageUrl { get; set; } public int? ParentCategoryId { get; set; } public Category? ParentCategory { get; set; } public ICollection<Category> Children { get; set; } = []; public bool IsActive { get; set; } = true; public ICollection<SupplierCategory> SupplierCategories { get; set; } = []; }
+public sealed class ProductCategory : AuditableEntity { public required string Name { get; set; } public string? Description { get; set; } public string? ImageUrl { get; set; } public int? ParentCategoryId { get; set; } public ProductCategory? ParentCategory { get; set; } public ICollection<ProductCategory> Children { get; set; } = []; public bool IsActive { get; set; } = true; public ICollection<Product> Products { get; set; } = []; }
 public sealed class Supplier : AuditableEntity { public required string Name { get; set; } public string? Description { get; set; } public string? LogoUrl { get; set; } public string? PhoneNumber { get; set; } public string? AdditionalPhoneNumbers { get; set; } public string? WhatsAppNumber { get; set; } public string? Email { get; set; } public string? Website { get; set; } public string? Address { get; set; } public string? ShortAddress { get; set; } public bool HasTechnicians { get; set; } public decimal? Latitude { get; set; } public decimal? Longitude { get; set; } public string? GoogleMapsUrl { get; set; } public bool IsActive { get; set; } = true; public ICollection<SupplierImage> Images { get; set; } = []; public ICollection<SupplierCategory> SupplierCategories { get; set; } = []; public ICollection<SupplierArea> SupplierAreas { get; set; } = []; }
 public sealed class SupplierImage : AuditableEntity { public int SupplierId { get; set; } public Supplier Supplier { get; set; } = null!; public required string ImageUrl { get; set; } public int DisplayOrder { get; set; } public int? AreaId { get; set; } public Area? Area { get; set; } }
 public sealed class SupplierCategory { public int SupplierId { get; set; } public Supplier Supplier { get; set; } = null!; public int CategoryId { get; set; } public Category Category { get; set; } = null!; }
@@ -21,6 +22,8 @@ public sealed class Product : AuditableEntity
     public string? Details { get; set; }
     public int? AreaId { get; set; }
     public Area? Area { get; set; }
+    public int? ProductCategoryId { get; set; }
+    public ProductCategory? ProductCategory { get; set; }
     public bool IsActive { get; set; } = true;
     
     public ICollection<ProductImage> Images { get; set; } = [];
@@ -33,3 +36,23 @@ public sealed class ProductImage : AuditableEntity
     public required string ImageUrl { get; set; }
     public int DisplayOrder { get; set; }
 }
+
+public sealed class Service : AuditableEntity
+{
+    public required string Name { get; set; }
+    public string? Description { get; set; }
+    public string? Details { get; set; }
+    public int DisplayOrder { get; set; }
+    public bool IsActive { get; set; } = true;
+    
+    public ICollection<ServiceImage> Images { get; set; } = [];
+}
+
+public sealed class ServiceImage : AuditableEntity
+{
+    public int ServiceId { get; set; }
+    public Service Service { get; set; } = null!;
+    public required string ImageUrl { get; set; }
+    public int DisplayOrder { get; set; }
+}
+

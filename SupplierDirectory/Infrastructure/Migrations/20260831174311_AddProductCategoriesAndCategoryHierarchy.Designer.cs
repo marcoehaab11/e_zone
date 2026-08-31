@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SupplierDirectory.Infrastructure;
 
@@ -11,9 +12,11 @@ using SupplierDirectory.Infrastructure;
 namespace SupplierDirectory.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260831174311_AddProductCategoriesAndCategoryHierarchy")]
+    partial class AddProductCategoriesAndCategoryHierarchy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -539,80 +542,6 @@ namespace SupplierDirectory.Infrastructure.Migrations
                     b.ToTable("ProductImages");
                 });
 
-            modelBuilder.Entity("SupplierDirectory.Domain.Service", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Details")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name");
-
-                    b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("SupplierDirectory.Domain.ServiceImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ServiceImages");
-                });
-
             modelBuilder.Entity("SupplierDirectory.Domain.Supplier", b =>
                 {
                     b.Property<int>("Id")
@@ -871,17 +800,6 @@ namespace SupplierDirectory.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("SupplierDirectory.Domain.ServiceImage", b =>
-                {
-                    b.HasOne("SupplierDirectory.Domain.Service", "Service")
-                        .WithMany("Images")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
-                });
-
             modelBuilder.Entity("SupplierDirectory.Domain.SupplierArea", b =>
                 {
                     b.HasOne("SupplierDirectory.Domain.Area", "Area")
@@ -961,11 +879,6 @@ namespace SupplierDirectory.Infrastructure.Migrations
                     b.Navigation("Children");
 
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("SupplierDirectory.Domain.Service", b =>
-                {
-                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("SupplierDirectory.Domain.Supplier", b =>

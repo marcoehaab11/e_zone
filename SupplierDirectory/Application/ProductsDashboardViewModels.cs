@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 using SupplierDirectory.Domain;
 using SupplierDirectory.Infrastructure.Validation;
@@ -9,6 +9,7 @@ public class ProductListQuery
 {
     public string? Search { get; set; }
     public int? AreaId { get; set; }
+    public int? ProductCategoryId { get; set; }
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 20;
 }
@@ -28,6 +29,7 @@ public class ProductFormViewModel
     public string? Details { get; set; }
     
     public int? AreaId { get; set; }
+    public int? ProductCategoryId { get; set; }
     
     public bool IsActive { get; set; } = true;
     
@@ -38,4 +40,5 @@ public class ProductFormViewModel
     public List<ProductImage> ExistingImages { get; set; } = new();
     
     public IReadOnlyList<Area> AvailableAreas { get; set; } = Array.Empty<Area>();
+    public IReadOnlyList<ProductCategory> AvailableCategories { get; set; } = Array.Empty<ProductCategory>();
 }

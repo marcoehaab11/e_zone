@@ -446,3 +446,451 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260820172640_ConfigureCoordinates'
+)
+BEGIN
+    DECLARE @var0 sysname;
+    SELECT @var0 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Suppliers]') AND [c].[name] = N'Longitude');
+    IF @var0 IS NOT NULL EXEC(N'ALTER TABLE [Suppliers] DROP CONSTRAINT [' + @var0 + '];');
+    ALTER TABLE [Suppliers] ALTER COLUMN [Longitude] decimal(9,6) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260820172640_ConfigureCoordinates'
+)
+BEGIN
+    DECLARE @var1 sysname;
+    SELECT @var1 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Suppliers]') AND [c].[name] = N'Latitude');
+    IF @var1 IS NOT NULL EXEC(N'ALTER TABLE [Suppliers] DROP CONSTRAINT [' + @var1 + '];');
+    ALTER TABLE [Suppliers] ALTER COLUMN [Latitude] decimal(9,6) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260820172640_ConfigureCoordinates'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20260820172640_ConfigureCoordinates', N'8.0.11');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822052257_AddSupplierTechniciansAndShortAddress'
+)
+BEGIN
+    ALTER TABLE [Suppliers] ADD [HasTechnicians] bit NOT NULL DEFAULT CAST(0 AS bit);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822052257_AddSupplierTechniciansAndShortAddress'
+)
+BEGIN
+    ALTER TABLE [Suppliers] ADD [ShortAddress] nvarchar(max) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822052257_AddSupplierTechniciansAndShortAddress'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20260822052257_AddSupplierTechniciansAndShortAddress', N'8.0.11');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822052844_AddAdvertisementArea'
+)
+BEGIN
+    ALTER TABLE [SupplierImages] ADD [AreaId] int NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822052844_AddAdvertisementArea'
+)
+BEGIN
+    ALTER TABLE [Advertisements] ADD [AreaId] int NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822052844_AddAdvertisementArea'
+)
+BEGIN
+    CREATE INDEX [IX_SupplierImages_AreaId] ON [SupplierImages] ([AreaId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822052844_AddAdvertisementArea'
+)
+BEGIN
+    CREATE INDEX [IX_Advertisements_AreaId] ON [Advertisements] ([AreaId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822052844_AddAdvertisementArea'
+)
+BEGIN
+    ALTER TABLE [Advertisements] ADD CONSTRAINT [FK_Advertisements_Areas_AreaId] FOREIGN KEY ([AreaId]) REFERENCES [Areas] ([Id]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822052844_AddAdvertisementArea'
+)
+BEGIN
+    ALTER TABLE [SupplierImages] ADD CONSTRAINT [FK_SupplierImages_Areas_AreaId] FOREIGN KEY ([AreaId]) REFERENCES [Areas] ([Id]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822052844_AddAdvertisementArea'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20260822052844_AddAdvertisementArea', N'8.0.11');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822053147_AddProductsSection'
+)
+BEGIN
+    CREATE TABLE [Products] (
+        [Id] int NOT NULL IDENTITY,
+        [Name] nvarchar(max) NOT NULL,
+        [Description] nvarchar(max) NULL,
+        [Details] nvarchar(max) NULL,
+        [AreaId] int NULL,
+        [IsActive] bit NOT NULL,
+        [IsDeleted] bit NOT NULL,
+        [CreatedAt] datetime2 NOT NULL,
+        [UpdatedAt] datetime2 NULL,
+        CONSTRAINT [PK_Products] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Products_Areas_AreaId] FOREIGN KEY ([AreaId]) REFERENCES [Areas] ([Id])
+    );
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822053147_AddProductsSection'
+)
+BEGIN
+    CREATE TABLE [ProductImages] (
+        [Id] int NOT NULL IDENTITY,
+        [ProductId] int NOT NULL,
+        [ImageUrl] nvarchar(max) NOT NULL,
+        [DisplayOrder] int NOT NULL,
+        [IsDeleted] bit NOT NULL,
+        [CreatedAt] datetime2 NOT NULL,
+        [UpdatedAt] datetime2 NULL,
+        CONSTRAINT [PK_ProductImages] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_ProductImages_Products_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [Products] ([Id]) ON DELETE CASCADE
+    );
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822053147_AddProductsSection'
+)
+BEGIN
+    CREATE INDEX [IX_ProductImages_ProductId] ON [ProductImages] ([ProductId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822053147_AddProductsSection'
+)
+BEGIN
+    CREATE INDEX [IX_Products_AreaId] ON [Products] ([AreaId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260822053147_AddProductsSection'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20260822053147_AddProductsSection', N'8.0.11');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    DROP INDEX [IX_Categories_Name] ON [Categories];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    DECLARE @var2 sysname;
+    SELECT @var2 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Products]') AND [c].[name] = N'Name');
+    IF @var2 IS NOT NULL EXEC(N'ALTER TABLE [Products] DROP CONSTRAINT [' + @var2 + '];');
+    ALTER TABLE [Products] ALTER COLUMN [Name] nvarchar(450) NOT NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    ALTER TABLE [Products] ADD [ProductCategoryId] int NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    ALTER TABLE [Categories] ADD [ParentCategoryId] int NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    CREATE TABLE [ProductCategories] (
+        [Id] int NOT NULL IDENTITY,
+        [Name] nvarchar(450) NOT NULL,
+        [Description] nvarchar(max) NULL,
+        [ImageUrl] nvarchar(max) NULL,
+        [ParentCategoryId] int NULL,
+        [IsActive] bit NOT NULL,
+        [IsDeleted] bit NOT NULL,
+        [CreatedAt] datetime2 NOT NULL,
+        [UpdatedAt] datetime2 NULL,
+        CONSTRAINT [PK_ProductCategories] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_ProductCategories_ProductCategories_ParentCategoryId] FOREIGN KEY ([ParentCategoryId]) REFERENCES [ProductCategories] ([Id]) ON DELETE NO ACTION
+    );
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    CREATE INDEX [IX_Products_Name] ON [Products] ([Name]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    CREATE INDEX [IX_Products_ProductCategoryId] ON [Products] ([ProductCategoryId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    CREATE INDEX [IX_Categories_Name] ON [Categories] ([Name]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    CREATE INDEX [IX_Categories_ParentCategoryId] ON [Categories] ([ParentCategoryId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    CREATE INDEX [IX_ProductCategories_Name] ON [ProductCategories] ([Name]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    CREATE INDEX [IX_ProductCategories_ParentCategoryId] ON [ProductCategories] ([ParentCategoryId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    ALTER TABLE [Categories] ADD CONSTRAINT [FK_Categories_Categories_ParentCategoryId] FOREIGN KEY ([ParentCategoryId]) REFERENCES [Categories] ([Id]) ON DELETE NO ACTION;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    ALTER TABLE [Products] ADD CONSTRAINT [FK_Products_ProductCategories_ProductCategoryId] FOREIGN KEY ([ProductCategoryId]) REFERENCES [ProductCategories] ([Id]) ON DELETE SET NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831174311_AddProductCategoriesAndCategoryHierarchy'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20260831174311_AddProductCategoriesAndCategoryHierarchy', N'8.0.11');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831175434_AddServicesSection'
+)
+BEGIN
+    CREATE TABLE [Services] (
+        [Id] int NOT NULL IDENTITY,
+        [Name] nvarchar(450) NOT NULL,
+        [Description] nvarchar(max) NULL,
+        [Details] nvarchar(max) NULL,
+        [DisplayOrder] int NOT NULL,
+        [IsActive] bit NOT NULL,
+        [IsDeleted] bit NOT NULL,
+        [CreatedAt] datetime2 NOT NULL,
+        [UpdatedAt] datetime2 NULL,
+        CONSTRAINT [PK_Services] PRIMARY KEY ([Id])
+    );
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831175434_AddServicesSection'
+)
+BEGIN
+    CREATE TABLE [ServiceImages] (
+        [Id] int NOT NULL IDENTITY,
+        [ServiceId] int NOT NULL,
+        [ImageUrl] nvarchar(max) NOT NULL,
+        [DisplayOrder] int NOT NULL,
+        [IsDeleted] bit NOT NULL,
+        [CreatedAt] datetime2 NOT NULL,
+        [UpdatedAt] datetime2 NULL,
+        CONSTRAINT [PK_ServiceImages] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_ServiceImages_Services_ServiceId] FOREIGN KEY ([ServiceId]) REFERENCES [Services] ([Id]) ON DELETE CASCADE
+    );
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831175434_AddServicesSection'
+)
+BEGIN
+    CREATE INDEX [IX_ServiceImages_ServiceId] ON [ServiceImages] ([ServiceId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831175434_AddServicesSection'
+)
+BEGIN
+    CREATE INDEX [IX_Services_Name] ON [Services] ([Name]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260831175434_AddServicesSection'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20260831175434_AddServicesSection', N'8.0.11');
+END;
+GO
+
+COMMIT;
+GO
+

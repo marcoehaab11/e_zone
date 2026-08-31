@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SupplierDirectory.Application;
@@ -8,11 +8,11 @@ using SupplierDirectory.Infrastructure;
 namespace SupplierDirectory.Controllers;
 
 [Authorize(Roles = "Admin")]
-public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageService fileStorage) : Controller
+public sealed class ProductCategoriesDashboardController(AppDbContext db, IFileStorageService fileStorage) : Controller
 {
     private async Task<IReadOnlyList<(int Id, string Name)>> GetParentCategories(int? excludeId = null)
     {
-        var query = db.Categories.AsNoTracking().Where(c => c.IsActive && c.ParentCategoryId == null);
+        var query = db.ProductCategories.AsNoTracking().Where(c => c.IsActive && c.ParentCategoryId == null);
         if (excludeId.HasValue)
         {
             query = query.Where(c => c.Id != excludeId.Value);
@@ -21,12 +21,12 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
         return list.Select(c => (c.Id, c.Name)).ToList();
     }
 
-    [HttpGet("dashboard/categories-list")]
-    public async Task<IActionResult> Index([FromQuery] CategoryListQuery query)
+    [HttpGet("dashboard/product-categories")]
+    public async Task<IActionResult> Index([FromQuery] ProductCategoryListQuery query)
     {
-        var dbQuery = db.Categories.Include(c => c.ParentCategory)
+        var dbQuery = db.ProductCategories.Include(c => c.ParentCategory)
             .Include(c => c.Children)
-            .Include(c => c.SupplierCategories)
+            .Include(c => c.Products)
             .AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(query.Search))
@@ -47,7 +47,7 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
             .ThenBy(x => x.Name)
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
-            .Select(x => new CategoryListItem
+            .Select(x => new ProductCategoryListItem
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -55,7 +55,7 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
                 ImageUrl = x.ImageUrl,
                 ParentCategoryId = x.ParentCategoryId,
                 ParentName = x.ParentCategory != null ? x.ParentCategory.Name : null,
-                SuppliersCount = x.SupplierCategories.Count,
+                ProductsCount = x.Products.Count,
                 SubCategoriesCount = x.Children.Count,
                 IsActive = x.IsActive,
                 CreatedAt = x.CreatedAt
@@ -64,7 +64,7 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
 
         var parents = await GetParentCategories();
 
-        return View(new CategoryListViewModel
+        return View(new ProductCategoryListViewModel
         {
             Items = items,
             Parents = parents,
@@ -73,20 +73,20 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
         });
     }
 
-    [HttpGet("dashboard/categories-list/create")]
+    [HttpGet("dashboard/product-categories/create")]
     public async Task<IActionResult> Create()
     {
-        return View("Form", new CategoryFormViewModel
+        return View("Form", new ProductCategoryFormViewModel
         {
             Parents = await GetParentCategories()
         });
     }
 
-    [HttpPost("dashboard/categories-list/create")]
+    [HttpPost("dashboard/product-categories/create")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CategoryFormViewModel model, CancellationToken ct)
+    public async Task<IActionResult> Create(ProductCategoryFormViewModel model, CancellationToken ct)
     {
-        if (model.ParentCategoryId.HasValue && !await db.Categories.AnyAsync(x => x.Id == model.ParentCategoryId.Value, ct))
+        if (model.ParentCategoryId.HasValue && !await db.ProductCategories.AnyAsync(x => x.Id == model.ParentCategoryId.Value, ct))
         {
             ModelState.AddModelError(nameof(model.ParentCategoryId), "التصنيف الرئيسي المحدد غير موجود");
         }
@@ -100,10 +100,10 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
         string? imageUrl = null;
         if (model.ImageFile != null && model.ImageFile.Length > 0)
         {
-            imageUrl = await fileStorage.SaveImageAsync(model.ImageFile, "categories", ct);
+            imageUrl = await fileStorage.SaveImageAsync(model.ImageFile, "product-categories", ct);
         }
 
-        var category = new Category
+        var category = new ProductCategory
         {
             Name = model.Name.Trim(),
             Description = model.Description?.Trim(),
@@ -112,20 +112,20 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
             IsActive = model.IsActive
         };
 
-        db.Categories.Add(category);
+        db.ProductCategories.Add(category);
         await db.SaveChangesAsync(ct);
 
-        TempData["SuccessMessage"] = "تمت إضافة تصنيف المورد بنجاح";
+        TempData["SuccessMessage"] = "تمت إضافة تصنيف المنتج بنجاح";
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet("dashboard/categories-list/{id:int}/edit")]
+    [HttpGet("dashboard/product-categories/{id:int}/edit")]
     public async Task<IActionResult> Edit(int id)
     {
-        var cat = await db.Categories.FindAsync(id);
+        var cat = await db.ProductCategories.FindAsync(id);
         if (cat == null) return NotFound();
 
-        var vm = new CategoryFormViewModel
+        var vm = new ProductCategoryFormViewModel
         {
             Id = cat.Id,
             Name = cat.Name,
@@ -139,11 +139,11 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
         return View("Form", vm);
     }
 
-    [HttpPost("dashboard/categories-list/{id:int}/edit")]
+    [HttpPost("dashboard/product-categories/{id:int}/edit")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, CategoryFormViewModel model, CancellationToken ct)
+    public async Task<IActionResult> Edit(int id, ProductCategoryFormViewModel model, CancellationToken ct)
     {
-        var cat = await db.Categories.FindAsync([id], ct);
+        var cat = await db.ProductCategories.FindAsync([id], ct);
         if (cat == null) return NotFound();
 
         if (model.ParentCategoryId == id)
@@ -151,7 +151,7 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
             ModelState.AddModelError(nameof(model.ParentCategoryId), "لا يمكن للتصنيف أن يكون رئيسياً لنفسه");
         }
 
-        if (model.ParentCategoryId.HasValue && !await db.Categories.AnyAsync(c => c.Id == model.ParentCategoryId.Value, ct))
+        if (model.ParentCategoryId.HasValue && !await db.ProductCategories.AnyAsync(c => c.Id == model.ParentCategoryId.Value, ct))
         {
             ModelState.AddModelError(nameof(model.ParentCategoryId), "التصنيف الرئيسي المحدد غير موجود");
         }
@@ -170,7 +170,7 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
             {
                 await fileStorage.DeleteAsync(cat.ImageUrl);
             }
-            cat.ImageUrl = await fileStorage.SaveImageAsync(model.ImageFile, "categories", ct);
+            cat.ImageUrl = await fileStorage.SaveImageAsync(model.ImageFile, "product-categories", ct);
         }
 
         cat.Name = model.Name.Trim();
@@ -180,15 +180,15 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
         cat.UpdatedAt = DateTime.UtcNow;
 
         await db.SaveChangesAsync(ct);
-        TempData["SuccessMessage"] = "تم تعديل التصنيف بنجاح";
+        TempData["SuccessMessage"] = "تم تعديل تصنيف المنتج بنجاح";
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost("dashboard/categories-list/{id:int}/toggle")]
+    [HttpPost("dashboard/product-categories/{id:int}/toggle")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Toggle(int id)
     {
-        var cat = await db.Categories.FindAsync(id);
+        var cat = await db.ProductCategories.FindAsync(id);
         if (cat == null) return NotFound();
         cat.IsActive = !cat.IsActive;
         await db.SaveChangesAsync();
@@ -196,28 +196,28 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost("dashboard/categories-list/{id:int}/delete")]
+    [HttpPost("dashboard/product-categories/{id:int}/delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
-        var cat = await db.Categories.FindAsync(id);
+        var cat = await db.ProductCategories.FindAsync(id);
         if (cat == null) return NotFound();
 
-        if (await db.Categories.AnyAsync(c => c.ParentCategoryId == id))
+        if (await db.ProductCategories.AnyAsync(c => c.ParentCategoryId == id))
         {
             TempData["ErrorMessage"] = "لا يمكن حذف تصنيف يحتوي على تصنيفات فرعية تابعة له";
             return RedirectToAction(nameof(Index));
         }
 
-        if (await db.SupplierCategories.AnyAsync(sc => sc.CategoryId == id))
+        if (await db.Products.AnyAsync(p => p.ProductCategoryId == id))
         {
-            TempData["ErrorMessage"] = "لا يمكن حذف التصنيف لوجود موردين مرتبطين به";
+            TempData["ErrorMessage"] = "لا يمكن حذف التصنيف لوجود منتجات مرتبطة به";
             return RedirectToAction(nameof(Index));
         }
 
         cat.IsDeleted = true;
         await db.SaveChangesAsync();
-        TempData["SuccessMessage"] = "تم نقل التصنيف إلى سلة المحذوفات بنجاح";
+        TempData["SuccessMessage"] = "تم نقل تصنيف المنتج إلى سلة المحذوفات بنجاح";
         return RedirectToAction(nameof(Index));
     }
 }

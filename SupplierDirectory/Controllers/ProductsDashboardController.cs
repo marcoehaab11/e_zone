@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SupplierDirectory.Domain;
@@ -10,21 +10,25 @@ namespace SupplierDirectory.Controllers;
 [Authorize(Roles = "Admin")]
 public sealed class ProductsDashboardController(AppDbContext db, IFileStorageService fileStorage) : Controller
 {
-    private async Task PopulateAreas(ProductFormViewModel model)
+    private async Task PopulateDropdowns(ProductFormViewModel model)
     {
         model.AvailableAreas = await db.Areas.AsNoTracking().Where(a => !a.IsDeleted && a.IsActive).OrderBy(a => a.Name).ToListAsync();
+        model.AvailableCategories = await db.ProductCategories.AsNoTracking().Where(c => !c.IsDeleted && c.IsActive).OrderBy(c => c.Name).ToListAsync();
     }
 
     [HttpGet("dashboard/products")]
     public async Task<IActionResult> Index([FromQuery] ProductListQuery q)
     {
-        var query = db.Products.Include(p => p.Area).Include(p => p.Images).AsNoTracking().Where(p => !p.IsDeleted);
+        var query = db.Products.Include(p => p.Area).Include(p => p.ProductCategory).Include(p => p.Images).AsNoTracking().Where(p => !p.IsDeleted);
         
         if (!string.IsNullOrWhiteSpace(q.Search))
             query = query.Where(x => x.Name.Contains(q.Search) || (x.Description != null && x.Description.Contains(q.Search)));
             
         if (q.AreaId.HasValue)
             query = query.Where(x => x.AreaId == q.AreaId);
+
+        if (q.ProductCategoryId.HasValue)
+            query = query.Where(x => x.ProductCategoryId == q.ProductCategoryId);
 
         var total = await query.CountAsync();
         var items = await query.OrderByDescending(x => x.CreatedAt)
@@ -34,10 +38,12 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
 
         ViewBag.Search = q.Search;
         ViewBag.AreaId = q.AreaId;
+        ViewBag.ProductCategoryId = q.ProductCategoryId;
         ViewBag.Page = q.Page;
         ViewBag.PageSize = q.PageSize;
         ViewBag.TotalPages = (int)Math.Ceiling(total / (double)q.PageSize);
         ViewBag.Areas = await db.Areas.AsNoTracking().Where(a => !a.IsDeleted).ToListAsync();
+        ViewBag.ProductCategories = await db.ProductCategories.AsNoTracking().Where(c => !c.IsDeleted).OrderBy(c => c.Name).ToListAsync();
 
         return View(items);
     }
@@ -46,7 +52,7 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
     public async Task<IActionResult> Create()
     {
         var vm = new ProductFormViewModel();
-        await PopulateAreas(vm);
+        await PopulateDropdowns(vm);
         return View("Form", vm);
     }
 
@@ -56,7 +62,7 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
     {
         if (!ModelState.IsValid)
         {
-            await PopulateAreas(model);
+            await PopulateDropdowns(model);
             return View("Form", model);
         }
 
@@ -66,6 +72,7 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
             Description = model.Description?.Trim(),
             Details = model.Details?.Trim(),
             AreaId = model.AreaId,
+            ProductCategoryId = model.ProductCategoryId,
             IsActive = model.IsActive
         };
 
@@ -101,10 +108,11 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
             Description = product.Description,
             Details = product.Details,
             AreaId = product.AreaId,
+            ProductCategoryId = product.ProductCategoryId,
             IsActive = product.IsActive,
             ExistingImages = product.Images.OrderBy(i => i.DisplayOrder).ToList()
         };
-        await PopulateAreas(vm);
+        await PopulateDropdowns(vm);
         return View("Form", vm);
     }
 
@@ -114,7 +122,7 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
     {
         if (!ModelState.IsValid)
         {
-            await PopulateAreas(model);
+            await PopulateDropdowns(model);
             return View("Form", model);
         }
 
@@ -125,6 +133,7 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
         product.Description = model.Description?.Trim();
         product.Details = model.Details?.Trim();
         product.AreaId = model.AreaId;
+        product.ProductCategoryId = model.ProductCategoryId;
         product.IsActive = model.IsActive;
         product.UpdatedAt = DateTime.UtcNow;
 

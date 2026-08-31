@@ -1,0 +1,148 @@
+﻿@model IEnumerable<SupplierDirectory.Domain.Service>
+@{
+    ViewData["Title"] = "خدماتنا";
+    var search = ViewBag.Search as string;
+    var pageNum = (int)ViewBag.Page;
+    var totalPages = (int)ViewBag.TotalPages;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1"><i class="fa-solid fa-screwdriver-wrench text-primary me-2"></i> إدارة قسم خدماتنا</h3>
+        <p class="text-muted small mb-0">إضافة وتعديل الخدمات التي تقدمها المنصة وصورها وتفاصيلها</p>
+    </div>
+    <a href="/dashboard/services/create" class="btn btn-primary rounded-pill px-4 shadow-sm">
+        <i class="fa-solid fa-plus ms-1"></i> إضافة خدمة جديدة
+    </a>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" name="Search" class="form-control border-start-0" placeholder="ابحث باسم الخدمة أو الوصف..." value="@search">
+                </div>
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-secondary rounded-pill"><i class="fa-solid fa-filter ms-1"></i> بحث</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4" style="width: 80px;">الصورة</th>
+                        <th>اسم الخدمة</th>
+                        <th>الوصف</th>
+                        <th>عدد الصور</th>
+                        <th>ترتيب العرض</th>
+                        <th>الحالة</th>
+                        <th class="text-end pe-4">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    @if (item.Images.Any())
+                                    {
+                                        <img src="@item.Images.OrderBy(i => i.DisplayOrder).First().ImageUrl" class="rounded border shadow-sm" style="width: 48px; height: 48px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light rounded border d-flex justify-content-center align-items-center text-muted" style="width: 48px; height: 48px;">
+                                            <i class="fa-solid fa-screwdriver-wrench opacity-50"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-dark fs-6">@item.Name</span>
+                                    <div class="text-muted small">أضيفت في: @item.CreatedAt.ToString("yyyy-MM-dd")</div>
+                                </td>
+                                <td>
+                                    <span class="text-muted small text-truncate d-inline-block" style="max-width: 250px;">
+                                        @(string.IsNullOrWhiteSpace(item.Description) ? "—" : item.Description)
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">
+                                        <i class="fa-solid fa-images me-1"></i>@item.Images.Count صورة
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@item.DisplayOrder</span>
+                                </td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>نشط</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary"><i class="fa-solid fa-circle-xmark me-1"></i>معطل</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="/dashboard/services/@item.Id/edit" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="تعديل">
+                                            <i class="fa-solid fa-pen-to-square"></i> تعديل
+                                        </a>
+
+                                        <form method="post" action="/dashboard/services/@item.Id/toggle" class="m-0">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm @(item.IsActive ? "btn-outline-warning" : "btn-outline-success") rounded-pill px-2" title="@(item.IsActive ? "تعطيل" : "تفعيل")">
+                                                <i class="fa-solid @(item.IsActive ? "fa-ban" : "fa-check")"></i>
+                                            </button>
+                                        </form>
+
+                                        <form method="post" action="/dashboard/services/@item.Id/delete" class="m-0" onsubmit="return confirm('هل أنت متأكد من حذف هذه الخدمة؟');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3" title="حذف">
+                                                <i class="fa-solid fa-trash"></i> حذف
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-5">
+                                <i class="fa-solid fa-screwdriver-wrench fs-2 mb-2 d-block opacity-50"></i>
+                                لا توجد خدمات مضافة حتى الآن
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (totalPages > 1)
+    {
+        <div class="card-footer bg-white p-3">
+            <nav>
+                <ul class="pagination mb-0 justify-content-center">
+                    @for (var p = 1; p <= totalPages; p++)
+                    {
+                        <li class="page-item @(p == pageNum ? "active" : "")">
+                            <a class="page-link" href="?Page=@p&Search=@search">@p</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
