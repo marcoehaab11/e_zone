@@ -114,6 +114,74 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row mt-2">
+                <!-- Platform Links -->
+                <div class="col-md-12 mb-4">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                        <h5 class="fw-bold text-primary mb-0"><i class="fa-solid fa-link me-2"></i>الروابط العامة والإضافية</h5>
+                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="addLinkRow()">
+                            <i class="fa-solid fa-plus me-1"></i> إضافة رابط جديد
+                        </button>
+                    </div>
+                    
+                    <div id="linksContainer" class="d-flex flex-column gap-2">
+                        @for (int i = 0; i < Model.Links.Count; i++)
+                        {
+                            <div class="row g-2 align-items-center link-row p-2 border rounded bg-light">
+                                <input type="hidden" name="Links[@i].Id" value="@Model.Links[i].Id" class="link-id" />
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="fa-solid fa-tag text-muted"></i></span>
+                                        <input type="text" name="Links[@i].Title" value="@Model.Links[i].Title" class="form-control link-title" placeholder="عنوان الرابط (مثل: فيسبوك، سياسة الخصوصية...)" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="fa-solid fa-globe text-muted"></i></span>
+                                        <input type="url" name="Links[@i].Url" value="@Model.Links[i].Url" class="form-control link-url" placeholder="الرابط (https://...)" dir="ltr" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-1 text-center">
+                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-circle p-2" onclick="removeLinkRow(this)" title="حذف الرابط">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div id="noLinksMsg" class="text-muted small text-center p-3 border border-dashed rounded mt-2 @(Model.Links.Any() ? "d-none" : "")">
+                        لا توجد روابط إضافية مضافة حالياً. اضغط على زر "إضافة رابط جديد" لإضافة روابط للمنصة.
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <!-- Platform Images -->
+                <div class="col-md-12 mb-4">
+                    <h5 class="fw-bold text-primary border-bottom pb-2 mb-3"><i class="fa-solid fa-images me-2"></i>صور المنصة (معرض الصور)</h5>
+                    
+                    <div class="mb-4">
+                        <label asp-for="NewImages" class="form-label fw-bold">رفع صور جديدة للمنصة (يمكنك اختيار أكثر من صورة)</label>
+                        <input type="file" asp-for="NewImages" class="form-control" multiple accept="image/*">
+                        <span asp-validation-for="NewImages" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    @if (Model.ExistingImages != null && Model.ExistingImages.Any()) {
+                        <h6 class="fw-bold mb-3">الصور الحالية:</h6>
+                        <div class="row g-3">
+                            @foreach(var img in Model.ExistingImages) {
+                                <div class="col-6 col-md-3 col-lg-2 text-center" id="img-@img.Id">
+                                    <div class="position-relative d-inline-block border rounded p-1 shadow-sm bg-light">
+                                        <img src="@img.ImageUrl" class="img-fluid rounded" style="height:100px; width:100px; object-fit:cover;">
+                                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 start-0 translate-middle rounded-circle shadow" onclick="deleteCompanyImg(@img.Id)"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
             
             <hr class="mb-4">
             
@@ -123,3 +191,88 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function reindexLinks() {
+            const container = document.getElementById('linksContainer');
+            const rows = container.querySelectorAll('.link-row');
+            const noLinksMsg = document.getElementById('noLinksMsg');
+            
+            if (rows.length === 0) {
+                if (noLinksMsg) noLinksMsg.classList.remove('d-none');
+            } else {
+                if (noLinksMsg) noLinksMsg.classList.add('d-none');
+            }
+
+            rows.forEach((row, index) => {
+                const idInput = row.querySelector('.link-id');
+                const titleInput = row.querySelector('.link-title');
+                const urlInput = row.querySelector('.link-url');
+                
+                if (idInput) idInput.name = `Links[${index}].Id`;
+                if (titleInput) titleInput.name = `Links[${index}].Title`;
+                if (urlInput) urlInput.name = `Links[${index}].Url`;
+            });
+        }
+
+        function addLinkRow(title = '', url = '') {
+            const container = document.getElementById('linksContainer');
+            const index = container.querySelectorAll('.link-row').length;
+            
+            const row = document.createElement('div');
+            row.className = 'row g-2 align-items-center link-row p-2 border rounded bg-light mb-2';
+            row.innerHTML = `
+                <input type="hidden" name="Links[${index}].Id" value="0" class="link-id" />
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fa-solid fa-tag text-muted"></i></span>
+                        <input type="text" name="Links[${index}].Title" value="${title}" class="form-control link-title" placeholder="عنوان الرابط (مثل: فيسبوك، سياسة الخصوصية...)" required />
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fa-solid fa-globe text-muted"></i></span>
+                        <input type="url" name="Links[${index}].Url" value="${url}" class="form-control link-url" placeholder="الرابط (https://...)" dir="ltr" required />
+                    </div>
+                </div>
+                <div class="col-md-1 text-center">
+                    <button type="button" class="btn btn-outline-danger btn-sm rounded-circle p-2" onclick="removeLinkRow(this)" title="حذف الرابط">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(row);
+            reindexLinks();
+        }
+
+        function removeLinkRow(btn) {
+            const row = btn.closest('.link-row');
+            if (row) {
+                row.remove();
+                reindexLinks();
+            }
+        }
+
+        function deleteCompanyImg(imgId) {
+            if(!confirm('هل أنت متأكد من حذف هذه الصورة؟')) return;
+            fetch('/dashboard/company/delete-image/' + imgId, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value 
+                }
+            }).then(r => { 
+                if(r.ok) {
+                    const el = document.getElementById('img-' + imgId);
+                    if(el) el.remove();
+                } else {
+                    alert('حدث خطأ أثناء حذف الصورة');
+                }
+            }).catch(e => {
+                alert('حدث خطأ في الاتصال');
+            });
+        }
+    </script>
+}

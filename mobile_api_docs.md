@@ -1,4 +1,4 @@
-﻿# دليل استهلاك واجهة برمجة التطبيقات (Mobile API Documentation) - E-Zone
+# دليل استهلاك واجهة برمجة التطبيقات (Mobile API Documentation) - E-Zone
 
 يحتوي هذا الملف على جميع مسارات (Endpoints) الـ `GET` المخصصة لتطبيق الموبايل لعرض البيانات للزوار والمستخدمين.
 
@@ -29,7 +29,7 @@ MobileApiKey: EZone-Mobile-App-Key-8XyZ2pL9mQ4vR1wT
 ---
 
 ## 1. معلومات الشركة والمنصة (Company Info)
-- **الوصف:** جلب معلومات المنصة والتواصل لعرضها في صفحة "عن التطبيق" أو "اتصل بنا".
+- **الوصف:** جلب معلومات المنصة والتواصل، الروابط العامة، ومعرض الصور لعرضها في صفحة "عن التطبيق" أو "اتصل بنا".
 - **المسار:** `GET /api/company`
 - **Response (مثال):**
 ```json
@@ -50,7 +50,33 @@ MobileApiKey: EZone-Mobile-App-Key-8XyZ2pL9mQ4vR1wT
     "whatsApp": "01000000000",
     "email": "info@example.com",
     "website": "https://example.com",
-    "socialLinksJson": "{\"facebook\":\"url\"}"
+    "socialLinksJson": null,
+    "links": [
+      {
+        "id": 1,
+        "title": "فيسبوك",
+        "url": "https://facebook.com/example",
+        "displayOrder": 1
+      },
+      {
+        "id": 2,
+        "title": "سياسة الاستخدام والخصوصية",
+        "url": "https://example.com/terms",
+        "displayOrder": 2
+      }
+    ],
+    "images": [
+      {
+        "id": 1,
+        "imageUrl": "/uploads/company/images/img1.jpg",
+        "displayOrder": 1
+      },
+      {
+        "id": 2,
+        "imageUrl": "/uploads/company/images/img2.jpg",
+        "displayOrder": 2
+      }
+    ]
   }
 }
 ```

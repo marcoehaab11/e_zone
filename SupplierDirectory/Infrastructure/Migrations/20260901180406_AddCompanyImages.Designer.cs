@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SupplierDirectory.Infrastructure;
 
@@ -11,9 +12,11 @@ using SupplierDirectory.Infrastructure;
 namespace SupplierDirectory.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260901180406_AddCompanyImages")]
+    partial class AddCompanyImages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -450,44 +453,6 @@ namespace SupplierDirectory.Infrastructure.Migrations
                     b.ToTable("CompanyInfos");
                 });
 
-            modelBuilder.Entity("SupplierDirectory.Domain.CompanyLink", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CompanyInfoId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyInfoId");
-
-                    b.ToTable("CompanyLinks");
-                });
-
             modelBuilder.Entity("SupplierDirectory.Domain.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -917,17 +882,6 @@ namespace SupplierDirectory.Infrastructure.Migrations
                     b.Navigation("CompanyInfo");
                 });
 
-            modelBuilder.Entity("SupplierDirectory.Domain.CompanyLink", b =>
-                {
-                    b.HasOne("SupplierDirectory.Domain.CompanyInfo", "CompanyInfo")
-                        .WithMany("Links")
-                        .HasForeignKey("CompanyInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CompanyInfo");
-                });
-
             modelBuilder.Entity("SupplierDirectory.Domain.Product", b =>
                 {
                     b.HasOne("SupplierDirectory.Domain.Area", "Area")
@@ -1048,8 +1002,6 @@ namespace SupplierDirectory.Infrastructure.Migrations
             modelBuilder.Entity("SupplierDirectory.Domain.CompanyInfo", b =>
                 {
                     b.Navigation("Images");
-
-                    b.Navigation("Links");
                 });
 
             modelBuilder.Entity("SupplierDirectory.Domain.Product", b =>

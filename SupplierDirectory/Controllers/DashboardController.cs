@@ -29,7 +29,7 @@ public sealed class DashboardController(AppDbContext db, IFileStorageService fil
     [HttpGet("dashboard/company")]
     public async Task<IActionResult> Company()
     {
-        var info = await db.CompanyInfos.FirstOrDefaultAsync() ?? new CompanyInfo();
+        var info = await db.CompanyInfos.Include(c => c.Images).Include(c => c.Links).FirstOrDefaultAsync() ?? new CompanyInfo();
         var vm = new CompanyFormViewModel
         {
             Id = info.Id,
@@ -45,7 +45,9 @@ public sealed class DashboardController(AppDbContext db, IFileStorageService fil
             Vision = info.Vision,
             PlatformDescription = info.PlatformDescription,
             PlatformServices = info.PlatformServices,
-            SocialLinksJson = info.SocialLinksJson
+            SocialLinksJson = info.SocialLinksJson,
+            ExistingImages = info.Images.OrderBy(i => i.DisplayOrder).ToList(),
+            Links = info.Links.OrderBy(l => l.DisplayOrder).Select(l => new CompanyLinkViewModel { Id = l.Id, Title = l.Title, Url = l.Url }).ToList()
         };
         return View(vm);
     }
@@ -54,13 +56,17 @@ public sealed class DashboardController(AppDbContext db, IFileStorageService fil
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Company(CompanyFormViewModel model, CancellationToken ct)
     {
+        var existing = await db.CompanyInfos.Include(c => c.Images).Include(c => c.Links).FirstOrDefaultAsync();
+        
         if (!ModelState.IsValid)
         {
+            if (existing != null)
+            {
+                model.ExistingImages = existing.Images.OrderBy(i => i.DisplayOrder).ToList();
+            }
             return View(model);
         }
 
-        var existing = await db.CompanyInfos.FirstOrDefaultAsync();
-        
         if (existing == null)
         {
             existing = new CompanyInfo();
@@ -84,20 +90,86 @@ public sealed class DashboardController(AppDbContext db, IFileStorageService fil
         {
             if (!string.IsNullOrEmpty(existing.LogoUrl)) await fileStorage.DeleteAsync(existing.LogoUrl);
             try { existing.LogoUrl = await fileStorage.SaveImageAsync(model.LogoFile, "company", ct); }
-            catch (Exception ex) { ModelState.AddModelError("LogoFile", ex.Message); return View(model); }
+            catch (Exception ex) { ModelState.AddModelError("LogoFile", ex.Message); model.ExistingImages = existing.Images.OrderBy(i => i.DisplayOrder).ToList(); return View(model); }
         }
 
         if (model.CoverFile != null)
         {
             if (!string.IsNullOrEmpty(existing.CoverImageUrl)) await fileStorage.DeleteAsync(existing.CoverImageUrl);
             try { existing.CoverImageUrl = await fileStorage.SaveImageAsync(model.CoverFile, "company", ct); }
-            catch (Exception ex) { ModelState.AddModelError("CoverFile", ex.Message); return View(model); }
+            catch (Exception ex) { ModelState.AddModelError("CoverFile", ex.Message); model.ExistingImages = existing.Images.OrderBy(i => i.DisplayOrder).ToList(); return View(model); }
+        }
+
+        if (model.NewImages.Any())
+        {
+            int order = existing.Images.Any() ? existing.Images.Max(i => i.DisplayOrder) + 1 : 1;
+            foreach (var imgFile in model.NewImages)
+            {
+                if (imgFile.Length > 0)
+                {
+                    var url = await fileStorage.SaveImageAsync(imgFile, "company/images", ct);
+                    existing.Images.Add(new CompanyImage { ImageUrl = url, DisplayOrder = order++ });
+                }
+            }
+        }
+
+        // Process Links
+        var validLinks = model.Links?
+            .Where(l => !string.IsNullOrWhiteSpace(l.Title) && !string.IsNullOrWhiteSpace(l.Url))
+            .ToList() ?? new();
+
+        var keepIds = validLinks.Where(l => l.Id.HasValue && l.Id.Value > 0).Select(l => l.Id!.Value).ToHashSet();
+        var toRemove = existing.Links.Where(l => !keepIds.Contains(l.Id)).ToList();
+        foreach (var item in toRemove)
+        {
+            db.CompanyLinks.Remove(item);
+        }
+
+        int linkOrder = 1;
+        foreach (var linkDto in validLinks)
+        {
+            if (linkDto.Id.HasValue && linkDto.Id.Value > 0)
+            {
+                var currentLink = existing.Links.FirstOrDefault(l => l.Id == linkDto.Id.Value);
+                if (currentLink != null)
+                {
+                    currentLink.Title = linkDto.Title!.Trim();
+                    currentLink.Url = linkDto.Url!.Trim();
+                    currentLink.DisplayOrder = linkOrder++;
+                    currentLink.UpdatedAt = DateTime.UtcNow;
+                }
+            }
+            else
+            {
+                existing.Links.Add(new CompanyLink
+                {
+                    Title = linkDto.Title!.Trim(),
+                    Url = linkDto.Url!.Trim(),
+                    DisplayOrder = linkOrder++
+                });
+            }
         }
 
         await db.SaveChangesAsync(ct);
         TempData["SuccessMessage"] = "تم تحديث معلومات الشركة بنجاح";
         
         return RedirectToAction(nameof(Company));
+    }
+
+    [HttpPost("dashboard/company/delete-image/{imageId:int}")]
+    public async Task<IActionResult> DeleteCompanyImage(int imageId)
+    {
+        var info = await db.CompanyInfos.Include(c => c.Images).FirstOrDefaultAsync();
+        if (info == null) return NotFound();
+
+        var img = info.Images.FirstOrDefault(i => i.Id == imageId);
+        if (img != null)
+        {
+            await fileStorage.DeleteAsync(img.ImageUrl);
+            db.CompanyImages.Remove(img);
+            await db.SaveChangesAsync();
+        }
+        return Ok();
     }
 }
 

@@ -210,7 +210,31 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
     }
 
     [HttpGet("company")]
-    public async Task<IActionResult> Company() => Ok(new ApiResponse<object>(true, "تم الاسترجاع", await db.CompanyInfos.AsNoTracking().FirstOrDefaultAsync()));
+    public async Task<IActionResult> Company()
+    {
+        var info = await db.CompanyInfos.AsNoTracking()
+            .Select(c => new {
+                c.Id,
+                c.CompanyName,
+                c.LogoUrl,
+                c.CoverImageUrl,
+                c.About,
+                c.Mission,
+                c.Vision,
+                c.PlatformDescription,
+                c.PlatformServices,
+                c.ContactPhone,
+                c.WhatsApp,
+                c.Email,
+                c.Website,
+                c.SocialLinksJson,
+                Links = c.Links.OrderBy(l => l.DisplayOrder).Select(l => new { l.Id, l.Title, l.Url, l.DisplayOrder }),
+                Images = c.Images.OrderBy(i => i.DisplayOrder).Select(i => new { i.Id, i.ImageUrl, i.DisplayOrder })
+            })
+            .FirstOrDefaultAsync();
+
+        return Ok(new ApiResponse<object>(true, "تم الاسترجاع", info));
+    }
 
     [HttpGet("products")]
     public async Task<IActionResult> Products([FromQuery] PageQuery q, [FromQuery] int? areaId, [FromQuery] int? productCategoryId, [FromQuery] int? categoryId)

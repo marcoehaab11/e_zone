@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 using SupplierDirectory.Domain;
 using SupplierDirectory.Infrastructure.Validation;
@@ -42,6 +42,21 @@ public class CompanyFormViewModel
     public string? PlatformDescription { get; set; }
     public string? PlatformServices { get; set; }
     public string? SocialLinksJson { get; set; }
+
+    [MaxFileSize(5 * 1024 * 1024)]
+    [AllowedExtensions(new[] { ".jpg", ".png", ".jpeg", ".webp" })]
+    public List<IFormFile> NewImages { get; set; } = new();
+
+    public List<CompanyImage> ExistingImages { get; set; } = new();
+
+    public List<CompanyLinkViewModel> Links { get; set; } = new();
+}
+
+public class CompanyLinkViewModel
+{
+    public int? Id { get; set; }
+    public string? Title { get; set; }
+    public string? Url { get; set; }
 }
 
 public class AdvertisementFormViewModel
