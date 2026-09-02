@@ -16,6 +16,11 @@ public class MaxFileSizeAttribute : ValidationAttribute
     {
         if (value is IFormFile file)
         {
+            if (file.Length == 0 || string.IsNullOrWhiteSpace(file.FileName))
+            {
+                return ValidationResult.Success;
+            }
+
             if (file.Length > _maxFileSize)
             {
                 return new ValidationResult(GetErrorMessage(file.FileName));
@@ -25,6 +30,11 @@ public class MaxFileSizeAttribute : ValidationAttribute
         {
             foreach (var f in files)
             {
+                if (f == null || f.Length == 0 || string.IsNullOrWhiteSpace(f.FileName))
+                {
+                    continue;
+                }
+
                 if (f.Length > _maxFileSize)
                 {
                     return new ValidationResult(GetErrorMessage(f.FileName));

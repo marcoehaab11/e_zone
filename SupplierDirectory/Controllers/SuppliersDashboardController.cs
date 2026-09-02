@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SupplierDirectory.Application;
@@ -71,6 +71,21 @@ public sealed class SuppliersDashboardController(AppDbContext db, IFileStorageSe
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SupplierFormViewModel model, CancellationToken ct)
     {
+        if (model.LogoFile == null || model.LogoFile.Length == 0 || string.IsNullOrWhiteSpace(model.LogoFile.FileName))
+        {
+            model.LogoFile = null;
+            ModelState.Remove(nameof(model.LogoFile));
+        }
+
+        if (model.NewImages != null)
+        {
+            model.NewImages = model.NewImages.Where(f => f != null && f.Length > 0 && !string.IsNullOrWhiteSpace(f.FileName)).ToList();
+            if (!model.NewImages.Any())
+            {
+                ModelState.Remove(nameof(model.NewImages));
+            }
+        }
+
         if (!ModelState.IsValid)
         {
             model.AvailableCategories = await db.Categories.Where(c => !c.IsDeleted && c.IsActive).OrderBy(c => c.Name).ToListAsync();
@@ -115,7 +130,7 @@ public sealed class SuppliersDashboardController(AppDbContext db, IFileStorageSe
         foreach (var areaId in model.SelectedAreaIds)
             supplier.SupplierAreas.Add(new SupplierArea { AreaId = areaId });
 
-        if (model.NewImages.Any())
+        if (model.NewImages != null && model.NewImages.Any())
         {
             int order = 1;
             foreach (var imgFile in model.NewImages)
@@ -184,6 +199,21 @@ public sealed class SuppliersDashboardController(AppDbContext db, IFileStorageSe
 
         if (supplier == null) return NotFound();
 
+        if (model.LogoFile == null || model.LogoFile.Length == 0 || string.IsNullOrWhiteSpace(model.LogoFile.FileName))
+        {
+            model.LogoFile = null;
+            ModelState.Remove(nameof(model.LogoFile));
+        }
+
+        if (model.NewImages != null)
+        {
+            model.NewImages = model.NewImages.Where(f => f != null && f.Length > 0 && !string.IsNullOrWhiteSpace(f.FileName)).ToList();
+            if (!model.NewImages.Any())
+            {
+                ModelState.Remove(nameof(model.NewImages));
+            }
+        }
+
         if (!ModelState.IsValid)
         {
             model.ExistingLogoUrl = supplier.LogoUrl;
@@ -228,7 +258,7 @@ public sealed class SuppliersDashboardController(AppDbContext db, IFileStorageSe
             supplier.SupplierAreas.Add(new SupplierArea { AreaId = areaId });
 
         // Add New Images
-        if (model.NewImages.Any())
+        if (model.NewImages != null && model.NewImages.Any())
         {
             int order = supplier.Images.Any() ? supplier.Images.Max(i => i.DisplayOrder) + 1 : 1;
             foreach (var imgFile in model.NewImages)

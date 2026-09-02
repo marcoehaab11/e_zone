@@ -60,6 +60,12 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(ProductFormViewModel model, CancellationToken ct)
     {
+        if (model.NewImages != null)
+        {
+            model.NewImages = model.NewImages.Where(f => f != null && f.Length > 0 && !string.IsNullOrWhiteSpace(f.FileName)).ToList();
+            if (!model.NewImages.Any()) ModelState.Remove(nameof(model.NewImages));
+        }
+
         if (!ModelState.IsValid)
         {
             await PopulateDropdowns(model);
@@ -76,7 +82,7 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
             IsActive = model.IsActive
         };
 
-        if (model.NewImages.Any())
+        if (model.NewImages != null && model.NewImages.Any())
         {
             int order = 1;
             foreach (var imgFile in model.NewImages)
@@ -120,6 +126,12 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, ProductFormViewModel model, CancellationToken ct)
     {
+        if (model.NewImages != null)
+        {
+            model.NewImages = model.NewImages.Where(f => f != null && f.Length > 0 && !string.IsNullOrWhiteSpace(f.FileName)).ToList();
+            if (!model.NewImages.Any()) ModelState.Remove(nameof(model.NewImages));
+        }
+
         if (!ModelState.IsValid)
         {
             await PopulateDropdowns(model);
@@ -137,7 +149,7 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
         product.IsActive = model.IsActive;
         product.UpdatedAt = DateTime.UtcNow;
 
-        if (model.NewImages.Any())
+        if (model.NewImages != null && model.NewImages.Any())
         {
             int order = product.Images.Any() ? product.Images.Max(i => i.DisplayOrder) + 1 : 1;
             foreach (var imgFile in model.NewImages)

@@ -228,6 +228,7 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
                 c.Email,
                 c.Website,
                 c.SocialLinksJson,
+                CoverImages = c.CoverImages.OrderBy(ci => ci.DisplayOrder).Select(ci => new { ci.Id, ci.ImageUrl, ci.DisplayOrder }),
                 Links = c.Links.OrderBy(l => l.DisplayOrder).Select(l => new { l.Id, l.Title, l.Url, l.DisplayOrder }),
                 Images = c.Images.OrderBy(i => i.DisplayOrder).Select(i => new { i.Id, i.ImageUrl, i.DisplayOrder })
             })

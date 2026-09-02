@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SupplierDirectory.Domain;
@@ -43,6 +43,12 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(ServiceFormViewModel model, CancellationToken ct)
     {
+        if (model.NewImages != null)
+        {
+            model.NewImages = model.NewImages.Where(f => f != null && f.Length > 0 && !string.IsNullOrWhiteSpace(f.FileName)).ToList();
+            if (!model.NewImages.Any()) ModelState.Remove(nameof(model.NewImages));
+        }
+
         if (!ModelState.IsValid)
         {
             return View("Form", model);
@@ -57,7 +63,7 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
             IsActive = model.IsActive
         };
 
-        if (model.NewImages.Any())
+        if (model.NewImages != null && model.NewImages.Any())
         {
             int order = 1;
             foreach (var imgFile in model.NewImages)
@@ -99,6 +105,12 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, ServiceFormViewModel model, CancellationToken ct)
     {
+        if (model.NewImages != null)
+        {
+            model.NewImages = model.NewImages.Where(f => f != null && f.Length > 0 && !string.IsNullOrWhiteSpace(f.FileName)).ToList();
+            if (!model.NewImages.Any()) ModelState.Remove(nameof(model.NewImages));
+        }
+
         if (!ModelState.IsValid)
         {
             return View("Form", model);
@@ -114,7 +126,7 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
         service.IsActive = model.IsActive;
         service.UpdatedAt = DateTime.UtcNow;
 
-        if (model.NewImages.Any())
+        if (model.NewImages != null && model.NewImages.Any())
         {
             int order = service.Images.Any() ? service.Images.Max(i => i.DisplayOrder) + 1 : 1;
             foreach (var imgFile in model.NewImages)

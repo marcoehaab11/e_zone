@@ -21,6 +21,12 @@ public class CompanyFormViewModel
     [AllowedExtensions(new[] { ".jpg", ".png", ".jpeg", ".webp" })]
     public IFormFile? CoverFile { get; set; }
 
+    [MaxFileSize(5 * 1024 * 1024)]
+    [AllowedExtensions(new[] { ".jpg", ".png", ".jpeg", ".webp" })]
+    public List<IFormFile> NewCoverImages { get; set; } = new();
+
+    public List<CompanyCoverImage> ExistingCoverImages { get; set; } = new();
+
     public string? LogoUrl { get; set; }
     public string? CoverImageUrl { get; set; }
 

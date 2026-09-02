@@ -16,8 +16,13 @@ public class AllowedExtensionsAttribute : ValidationAttribute
     {
         if (value is IFormFile file)
         {
+            if (file.Length == 0 || string.IsNullOrWhiteSpace(file.FileName))
+            {
+                return ValidationResult.Success;
+            }
+
             var extension = Path.GetExtension(file.FileName);
-            if (!_extensions.Contains(extension.ToLower()))
+            if (string.IsNullOrEmpty(extension) || !_extensions.Contains(extension.ToLower()))
             {
                 return new ValidationResult(GetErrorMessage());
             }
@@ -26,8 +31,13 @@ public class AllowedExtensionsAttribute : ValidationAttribute
         {
             foreach (var f in files)
             {
+                if (f == null || f.Length == 0 || string.IsNullOrWhiteSpace(f.FileName))
+                {
+                    continue;
+                }
+
                 var extension = Path.GetExtension(f.FileName);
-                if (!_extensions.Contains(extension.ToLower()))
+                if (string.IsNullOrEmpty(extension) || !_extensions.Contains(extension.ToLower()))
                 {
                     return new ValidationResult(GetErrorMessage());
                 }

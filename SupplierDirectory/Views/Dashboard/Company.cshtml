@@ -39,12 +39,28 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">صورة الغلاف (Cover)</label>
-                        <input type="file" asp-for="CoverFile" class="form-control" accept="image/*">
-                        <span asp-validation-for="CoverFile" class="text-danger small mt-1 d-block"></span>
-                        @if(!string.IsNullOrEmpty(Model.CoverImageUrl)) {
+                        <label class="form-label fw-bold">صور الغلاف (Cover Images) <span class="text-muted fw-normal small">(يمكنك اختيار أكثر من صورة)</span></label>
+                        <input type="file" asp-for="NewCoverImages" class="form-control" multiple accept="image/*">
+                        <span asp-validation-for="NewCoverImages" class="text-danger small mt-1 d-block"></span>
+                        <div class="form-text small text-muted">يمكنك تحديد عدة صور لعرضها كغلاف للمنصة (مثل السلايدر أو المعرض).</div>
+                        
+                        @if(Model.ExistingCoverImages != null && Model.ExistingCoverImages.Any()) {
+                            <div class="mt-3">
+                                <label class="form-label fw-bold small text-muted">صور الغلاف الحالية:</label>
+                                <div class="row g-2">
+                                    @foreach(var cover in Model.ExistingCoverImages) {
+                                        <div class="col-4 col-md-3 text-center" id="cover-img-@cover.Id">
+                                            <div class="position-relative d-inline-block border rounded p-1 shadow-sm bg-light w-100">
+                                                <img src="@cover.ImageUrl" alt="غلاف" class="img-fluid rounded" style="height: 80px; width: 100%; object-fit: cover;">
+                                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 start-0 translate-middle rounded-circle shadow" onclick="deleteCoverImg(@cover.Id)" title="حذف صورة الغلاف"><i class="fa-solid fa-xmark"></i></button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        } else if(!string.IsNullOrEmpty(Model.CoverImageUrl)) {
                             <div class="mt-2">
-                                <img src="@Model.CoverImageUrl" alt="غلاف" class="img-thumbnail" style="max-height: 120px;">
+                                <img src="@Model.CoverImageUrl" alt="غلاف" class="img-thumbnail" style="max-height: 100px;">
                             </div>
                         }
                     </div>
@@ -253,6 +269,26 @@
                 row.remove();
                 reindexLinks();
             }
+        }
+
+        function deleteCoverImg(imgId) {
+            if(!confirm('هل أنت متأكد من حذف صورة الغلاف هذه؟')) return;
+            fetch('/dashboard/company/delete-cover-image/' + imgId, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value 
+                }
+            }).then(r => { 
+                if(r.ok) {
+                    const el = document.getElementById('cover-img-' + imgId);
+                    if(el) el.remove();
+                } else {
+                    alert('حدث خطأ أثناء حذف صورة الغلاف');
+                }
+            }).catch(e => {
+                alert('حدث خطأ في الاتصال');
+            });
         }
 
         function deleteCompanyImg(imgId) {

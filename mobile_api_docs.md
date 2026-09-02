@@ -40,7 +40,19 @@ MobileApiKey: EZone-Mobile-App-Key-8XyZ2pL9mQ4vR1wT
     "id": 1,
     "companyName": "E-Zone",
     "logoUrl": "/uploads/company/logo.png",
-    "coverImageUrl": "/uploads/company/cover.jpg",
+    "coverImageUrl": "/uploads/company/covers/cover1.jpg",
+    "coverImages": [
+      {
+        "id": 1,
+        "imageUrl": "/uploads/company/covers/cover1.jpg",
+        "displayOrder": 1
+      },
+      {
+        "id": 2,
+        "imageUrl": "/uploads/company/covers/cover2.jpg",
+        "displayOrder": 2
+      }
+    ],
     "about": "نبذة عن المنصة...",
     "mission": "رسالتنا...",
     "vision": "رؤيتنا...",

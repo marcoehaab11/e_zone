@@ -47,14 +47,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">شعار المورد (Logo)</label>
+                        <label class="form-label fw-bold">شعار المورد (Logo) <span class="text-muted fw-normal small">(اختياري)</span></label>
                         <input type="file" asp-for="LogoFile" class="form-control" accept="image/*">
                         <span asp-validation-for="LogoFile" class="text-danger small mt-1 d-block"></span>
                         @if (!string.IsNullOrEmpty(Model.ExistingLogoUrl)) {
                             <div class="mt-2">
                                 <img src="@Model.ExistingLogoUrl" alt="شعار المورد الحالي" class="img-thumbnail" style="max-height: 100px;">
-                                <div class="small text-muted mt-1">الشعار الحالي (أضف ملفاً جديداً لاستبداله)</div>
+                                <div class="small text-muted mt-1">الشعار الحالي (أضف ملفاً جديداً فقط إذا أردت استبداله)</div>
                             </div>
+                        } else {
+                            <div class="small text-muted mt-1">اختياري - يمكنك ترك الحقل فارغاً في حال عدم توفر شعار.</div>
                         }
                     </div>
 
@@ -182,10 +184,10 @@
                 </div>
                 <div class="card-body p-4">
                     <div class="mb-4">
-                        <label class="form-label fw-bold">رفع صور جديدة للمورد</label>
+                        <label class="form-label fw-bold">رفع صور جديدة للمورد <span class="text-muted fw-normal small">(اختياري)</span></label>
                         <input type="file" asp-for="NewImages" class="form-control" multiple accept="image/*">
                         <span asp-validation-for="NewImages" class="text-danger small mt-1 d-block"></span>
-                        <div class="form-text">يمكنك تحديد أكثر من صورة لرفعها.</div>
+                        <div class="form-text">اختياري - يمكنك ترك الحقل فارغاً إذا لم ترغب في إضافة صور جديدة.</div>
                     </div>
 
                     @if (isEdit && Model.ExistingImages.Any()) {
