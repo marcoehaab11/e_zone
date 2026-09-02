@@ -1,4 +1,4 @@
-﻿@model SupplierDirectory.Application.ServiceFormViewModel
+@model SupplierDirectory.Application.ServiceFormViewModel
 @{
     var isEdit = Model.Id.HasValue && Model.Id > 0;
     ViewData["Title"] = isEdit ? "تعديل الخدمة" : "إضافة خدمة جديدة";
@@ -57,8 +57,8 @@
         </div>
         <div class="card-body p-4">
             <div class="mb-4">
-                <label asp-for="NewImages" class="form-label fw-bold">رفع صور جديدة (يمكنك اختيار صورة واحدة أو أكثر)</label>
-                <input type="file" asp-for="NewImages" class="form-control" multiple accept="image/*">
+                <label asp-for="NewImages" class="form-label fw-bold">رفع صور جديدة (اختياري - يمكنك اختيار صورة واحدة أو أكثر)</label>
+                <input type="file" asp-for="NewImages" class="form-control" multiple accept="image/*" data-val="false">
                 <div class="form-text">الصيغ المدعومة: JPG, PNG, WEBP (الحجم الأقصى لكل صورة: 5 ميجابايت).</div>
                 <span asp-validation-for="NewImages" class="text-danger small mt-1 d-block"></span>
             </div>

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 using SupplierDirectory.Domain;
 using SupplierDirectory.Infrastructure.Validation;
@@ -86,7 +86,7 @@ public class SupplierFormViewModel
     
     [MaxFileSize(5 * 1024 * 1024)]
     [AllowedExtensions(new[] { ".jpg", ".png", ".jpeg", ".webp" })]
-    public List<IFormFile> NewImages { get; set; } = new();
+    public List<IFormFile>? NewImages { get; set; } = new();
     
     public List<SupplierImage> ExistingImages { get; set; } = new();
     

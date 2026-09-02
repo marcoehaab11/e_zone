@@ -48,7 +48,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">شعار المورد (Logo) <span class="text-muted fw-normal small">(اختياري)</span></label>
-                        <input type="file" asp-for="LogoFile" class="form-control" accept="image/*">
+                        <input type="file" asp-for="LogoFile" class="form-control" accept="image/*" data-val="false">
                         <span asp-validation-for="LogoFile" class="text-danger small mt-1 d-block"></span>
                         @if (!string.IsNullOrEmpty(Model.ExistingLogoUrl)) {
                             <div class="mt-2">
@@ -185,7 +185,7 @@
                 <div class="card-body p-4">
                     <div class="mb-4">
                         <label class="form-label fw-bold">رفع صور جديدة للمورد <span class="text-muted fw-normal small">(اختياري)</span></label>
-                        <input type="file" asp-for="NewImages" class="form-control" multiple accept="image/*">
+                        <input type="file" asp-for="NewImages" class="form-control" multiple accept="image/*" data-val="false">
                         <span asp-validation-for="NewImages" class="text-danger small mt-1 d-block"></span>
                         <div class="form-text">اختياري - يمكنك ترك الحقل فارغاً إذا لم ترغب في إضافة صور جديدة.</div>
                     </div>

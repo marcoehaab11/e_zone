@@ -35,7 +35,7 @@ public class ProductFormViewModel
     
     [MaxFileSize(5 * 1024 * 1024)]
     [AllowedExtensions(new[] { ".jpg", ".png", ".jpeg", ".webp" })]
-    public List<IFormFile> NewImages { get; set; } = new();
+    public List<IFormFile>? NewImages { get; set; } = new();
     
     public List<ProductImage> ExistingImages { get; set; } = new();
     

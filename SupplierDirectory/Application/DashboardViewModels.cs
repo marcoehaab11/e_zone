@@ -23,7 +23,7 @@ public class CompanyFormViewModel
 
     [MaxFileSize(5 * 1024 * 1024)]
     [AllowedExtensions(new[] { ".jpg", ".png", ".jpeg", ".webp" })]
-    public List<IFormFile> NewCoverImages { get; set; } = new();
+    public List<IFormFile>? NewCoverImages { get; set; } = new();
 
     public List<CompanyCoverImage> ExistingCoverImages { get; set; } = new();
 
@@ -51,7 +51,7 @@ public class CompanyFormViewModel
 
     [MaxFileSize(5 * 1024 * 1024)]
     [AllowedExtensions(new[] { ".jpg", ".png", ".jpeg", ".webp" })]
-    public List<IFormFile> NewImages { get; set; } = new();
+    public List<IFormFile>? NewImages { get; set; } = new();
 
     public List<CompanyImage> ExistingImages { get; set; } = new();
 

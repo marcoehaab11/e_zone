@@ -1,4 +1,4 @@
-﻿@model SupplierDirectory.Application.AdvertisementFormViewModel
+@model SupplierDirectory.Application.AdvertisementFormViewModel
 @{
     var isEdit = Model.Id > 0;
     ViewData["Title"] = isEdit ? "تعديل الإعلان" : "إضافة إعلان";
@@ -28,8 +28,8 @@
             </div>
             
             <div class="mb-3">
-                <label class="form-label fw-bold">صورة الإعلان (بنر)</label>
-                <input type="file" asp-for="ImageFile" class="form-control" accept="image/*">
+                <label class="form-label fw-bold">صورة الإعلان (بنر) <span class="text-muted fw-normal small">(اختياري)</span></label>
+                <input type="file" asp-for="ImageFile" class="form-control" accept="image/*" data-val="false">
                 <span asp-validation-for="ImageFile" class="text-danger small mt-1 d-block"></span>
                 @if (!string.IsNullOrEmpty(Model.ImageUrl)) {
                     <div class="mt-2">

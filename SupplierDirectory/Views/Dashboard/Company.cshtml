@@ -29,7 +29,7 @@
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold">شعار الشركة (Logo)</label>
-                        <input type="file" asp-for="LogoFile" class="form-control" accept="image/*">
+                        <input type="file" asp-for="LogoFile" class="form-control" accept="image/*" data-val="false">
                         <span asp-validation-for="LogoFile" class="text-danger small mt-1 d-block"></span>
                         @if(!string.IsNullOrEmpty(Model.LogoUrl)) {
                             <div class="mt-2">
@@ -40,7 +40,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">صور الغلاف (Cover Images) <span class="text-muted fw-normal small">(يمكنك اختيار أكثر من صورة)</span></label>
-                        <input type="file" asp-for="NewCoverImages" class="form-control" multiple accept="image/*">
+                        <input type="file" asp-for="NewCoverImages" class="form-control" multiple accept="image/*" data-val="false">
                         <span asp-validation-for="NewCoverImages" class="text-danger small mt-1 d-block"></span>
                         <div class="form-text small text-muted">يمكنك تحديد عدة صور لعرضها كغلاف للمنصة (مثل السلايدر أو المعرض).</div>
                         
@@ -178,8 +178,8 @@
                     <h5 class="fw-bold text-primary border-bottom pb-2 mb-3"><i class="fa-solid fa-images me-2"></i>صور المنصة (معرض الصور)</h5>
                     
                     <div class="mb-4">
-                        <label asp-for="NewImages" class="form-label fw-bold">رفع صور جديدة للمنصة (يمكنك اختيار أكثر من صورة)</label>
-                        <input type="file" asp-for="NewImages" class="form-control" multiple accept="image/*">
+                        <label asp-for="NewImages" class="form-label fw-bold">رفع صور جديدة للمنصة (اختياري - يمكنك اختيار أكثر من صورة)</label>
+                        <input type="file" asp-for="NewImages" class="form-control" multiple accept="image/*" data-val="false">
                         <span asp-validation-for="NewImages" class="text-danger small mt-1 d-block"></span>
                     </div>
 

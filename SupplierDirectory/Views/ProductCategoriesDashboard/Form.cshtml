@@ -1,4 +1,4 @@
-﻿@model SupplierDirectory.Application.ProductCategoryFormViewModel
+@model SupplierDirectory.Application.ProductCategoryFormViewModel
 @{
     var isEdit = Model.Id.HasValue && Model.Id > 0;
     ViewData["Title"] = isEdit ? "تعديل تصنيف المنتج" : "إضافة تصنيف منتج جديد";
@@ -44,8 +44,8 @@
             </div>
 
             <div class="mb-4">
-                <label asp-for="ImageFile" class="form-label fw-bold">صورة / أيقونة التصنيف</label>
-                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" onchange="previewImage(this, 'productCatImgPreview')">
+                <label asp-for="ImageFile" class="form-label fw-bold">صورة / أيقونة التصنيف <span class="text-muted fw-normal small">(اختياري)</span></label>
+                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" data-val="false" onchange="previewImage(this, 'productCatImgPreview')">
                 <div class="form-text">الصيغ المدعومة: JPG, PNG, WEBP (الحجم الأقصى: 5 ميجابايت).</div>
                 <span asp-validation-for="ImageFile" class="text-danger small mt-1 d-block"></span>
 
