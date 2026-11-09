@@ -12,34 +12,38 @@ namespace SupplierDirectory.Controllers;
 public sealed class AdminServicesApiController(AppDbContext db) : ControllerBase
 {
     [HttpGet("service-categories")]
-    public async Task<IActionResult> Categories([FromQuery] PageQuery q)
+    public async Task<IActionResult> Categories([FromQuery] PageQuery q, [FromQuery] int? parentId)
     {
         var query = db.ServiceCategories.AsNoTracking();
         if (!string.IsNullOrWhiteSpace(q.Search)) query = query.Where(c => c.Name.Contains(q.Search));
+        if (parentId.HasValue) query = parentId == 0 ? query.Where(c => c.ParentServiceCategoryId == null) : query.Where(c => c.ParentServiceCategoryId == parentId);
         var total = await query.CountAsync();
         var data = await query.OrderBy(c => c.Name).Skip((q.Page - 1) * q.PageSize).Take(q.PageSize)
-            .Select(c => new ServiceCategoryDto(c.Id, c.Name, c.Description, c.Services.Count(s => !s.IsDeleted))).ToListAsync();
+            .Select(c => new ServiceCategoryDto(c.Id, c.Name, c.Description, c.ParentServiceCategoryId, c.ParentServiceCategory != null ? c.ParentServiceCategory.Name : null, c.Services.Count(s => !s.IsDeleted), c.Children.Count(x => !x.IsDeleted))).ToListAsync();
         var page = new PageResult<ServiceCategoryDto>(data, q.Page, q.PageSize, total); return Ok(new ApiResponse<object>(true, "تم الاسترجاع", page.Items, page.Meta));
     }
     [HttpPost("service-categories")]
     public async Task<IActionResult> CreateCategory(ServiceCategoryRequest request)
     {
         if (await db.ServiceCategories.AnyAsync(c => c.Name == request.Name.Trim())) return Conflict(new ApiResponse<object>(false, "اسم التصنيف مستخدم", null));
-        var category = new ServiceCategory { Name = request.Name.Trim(), Description = request.Description?.Trim(), IsActive = request.IsActive }; db.ServiceCategories.Add(category); await db.SaveChangesAsync();
-        return Created($"/api/admin/service-categories/{category.Id}", new ApiResponse<object>(true, "تمت الإضافة", new ServiceCategoryDto(category.Id, category.Name, category.Description, 0)));
+        if (request.ParentServiceCategoryId.HasValue && !await db.ServiceCategories.AnyAsync(c => c.Id == request.ParentServiceCategoryId)) return BadRequest(new ApiResponse<object>(false, "التصنيف الأب غير موجود", null));
+        var category = new ServiceCategory { Name = request.Name.Trim(), Description = request.Description?.Trim(), ParentServiceCategoryId = request.ParentServiceCategoryId, IsActive = request.IsActive }; db.ServiceCategories.Add(category); await db.SaveChangesAsync();
+        return Created($"/api/admin/service-categories/{category.Id}", new ApiResponse<object>(true, "تمت الإضافة", new ServiceCategoryDto(category.Id, category.Name, category.Description, category.ParentServiceCategoryId, null, 0, 0)));
     }
     [HttpPut("service-categories/{id:int}")]
     public async Task<IActionResult> UpdateCategory(int id, ServiceCategoryRequest request)
     {
         var category = await db.ServiceCategories.FindAsync(id); if (category is null) return NotFound(new ApiResponse<object>(false, "التصنيف غير موجود", null));
+        if (request.ParentServiceCategoryId == id) return BadRequest(new ApiResponse<object>(false, "لا يمكن اختيار التصنيف نفسه كأب", null));
+        if (request.ParentServiceCategoryId.HasValue && !await db.ServiceCategories.AnyAsync(c => c.Id == request.ParentServiceCategoryId)) return BadRequest(new ApiResponse<object>(false, "التصنيف الأب غير موجود", null));
         if (await db.ServiceCategories.AnyAsync(c => c.Id != id && c.Name == request.Name.Trim())) return Conflict(new ApiResponse<object>(false, "اسم التصنيف مستخدم", null));
-        category.Name = request.Name.Trim(); category.Description = request.Description?.Trim(); category.IsActive = request.IsActive; await db.SaveChangesAsync(); return Ok(new ApiResponse<object>(true, "تم التحديث", new ServiceCategoryDto(category.Id, category.Name, category.Description, 0)));
+        category.Name = request.Name.Trim(); category.Description = request.Description?.Trim(); category.ParentServiceCategoryId = request.ParentServiceCategoryId; category.IsActive = request.IsActive; await db.SaveChangesAsync(); return Ok(new ApiResponse<object>(true, "تم التحديث", new ServiceCategoryDto(category.Id, category.Name, category.Description, category.ParentServiceCategoryId, null, 0, 0)));
     }
     [HttpDelete("service-categories/{id:int}")]
     public async Task<IActionResult> DeleteCategory(int id)
     {
-        var category = await db.ServiceCategories.Include(c => c.Services).FirstOrDefaultAsync(c => c.Id == id); if (category is null) return NotFound();
-        if (category.Services.Any(s => !s.IsDeleted)) return Conflict(new ApiResponse<object>(false, "لا يمكن حذف تصنيف مرتبط بخدمات", null));
+        var category = await db.ServiceCategories.Include(c => c.Services).Include(c => c.Children).FirstOrDefaultAsync(c => c.Id == id); if (category is null) return NotFound();
+        if (category.Services.Any(s => !s.IsDeleted) || category.Children.Any(c => !c.IsDeleted)) return Conflict(new ApiResponse<object>(false, "لا يمكن حذف تصنيف مرتبط بخدمات أو تصنيفات فرعية", null));
         category.IsDeleted = true; await db.SaveChangesAsync(); return NoContent();
     }
     [HttpGet("services")]

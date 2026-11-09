@@ -714,6 +714,9 @@ namespace SupplierDirectory.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("ParentServiceCategoryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -721,6 +724,8 @@ namespace SupplierDirectory.Infrastructure.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique();
+
+                    b.HasIndex("ParentServiceCategoryId");
 
                     b.ToTable("ServiceCategories");
                 });
@@ -1060,6 +1065,16 @@ namespace SupplierDirectory.Infrastructure.Migrations
                     b.Navigation("ServiceCategory");
                 });
 
+            modelBuilder.Entity("SupplierDirectory.Domain.ServiceCategory", b =>
+                {
+                    b.HasOne("SupplierDirectory.Domain.ServiceCategory", "ParentServiceCategory")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentServiceCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ParentServiceCategory");
+                });
+
             modelBuilder.Entity("SupplierDirectory.Domain.ServiceImage", b =>
                 {
                     b.HasOne("SupplierDirectory.Domain.Service", "Service")
@@ -1168,6 +1183,8 @@ namespace SupplierDirectory.Infrastructure.Migrations
 
             modelBuilder.Entity("SupplierDirectory.Domain.ServiceCategory", b =>
                 {
+                    b.Navigation("Children");
+
                     b.Navigation("Services");
                 });
 

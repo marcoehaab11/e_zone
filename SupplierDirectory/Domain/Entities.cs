@@ -57,6 +57,9 @@ public sealed class ServiceCategory : AuditableEntity
 {
     public required string Name { get; set; }
     public string? Description { get; set; }
+    public int? ParentServiceCategoryId { get; set; }
+    public ServiceCategory? ParentServiceCategory { get; set; }
+    public ICollection<ServiceCategory> Children { get; set; } = [];
     public bool IsActive { get; set; } = true;
     public ICollection<Service> Services { get; set; } = [];
 }

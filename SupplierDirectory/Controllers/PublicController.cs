@@ -322,18 +322,19 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
     }
 
     [HttpGet("service-categories")]
-    public async Task<IActionResult> ServiceCategories([FromQuery] PageQuery q)
+    public async Task<IActionResult> ServiceCategories([FromQuery] PageQuery q, [FromQuery] int? parentId)
     {
         var query = db.ServiceCategories.AsNoTracking().Where(x => x.IsActive && !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.Search)) query = query.Where(x => x.Name.Contains(q.Search) || (x.Description ?? "").Contains(q.Search));
-        return await Page(query.OrderBy(x => x.Name).Select(x => new ServiceCategoryDto(x.Id, x.Name, x.Description, x.Services.Count(s => !s.IsDeleted && s.IsActive))), q);
+        if (parentId.HasValue) query = parentId == 0 ? query.Where(x => x.ParentServiceCategoryId == null) : query.Where(x => x.ParentServiceCategoryId == parentId);
+        return await Page(query.OrderBy(x => x.ParentServiceCategoryId).ThenBy(x => x.Name).Select(x => new ServiceCategoryDto(x.Id, x.Name, x.Description, x.ParentServiceCategoryId, x.ParentServiceCategory != null ? x.ParentServiceCategory.Name : null, x.Services.Count(s => !s.IsDeleted && s.IsActive), x.Children.Count(c => !c.IsDeleted && c.IsActive))), q);
     }
 
     [HttpGet("service-categories/{id:int}")]
     public async Task<IActionResult> ServiceCategory(int id)
     {
         var category = await db.ServiceCategories.AsNoTracking().Where(x => x.Id == id && x.IsActive && !x.IsDeleted)
-            .Select(x => new ServiceCategoryDto(x.Id, x.Name, x.Description, x.Services.Count(s => !s.IsDeleted && s.IsActive))).FirstOrDefaultAsync();
+            .Select(x => new ServiceCategoryDto(x.Id, x.Name, x.Description, x.ParentServiceCategoryId, x.ParentServiceCategory != null ? x.ParentServiceCategory.Name : null, x.Services.Count(s => !s.IsDeleted && s.IsActive), x.Children.Count(c => !c.IsDeleted && c.IsActive))).FirstOrDefaultAsync();
         return category is null ? NotFound(new ApiResponse<object>(false, "تصنيف الخدمة غير موجود", null)) : Ok(new ApiResponse<object>(true, "تم الاسترجاع", category));
     }
 

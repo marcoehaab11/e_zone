@@ -19,6 +19,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : Ident
   b.Entity<Category>().HasOne(x=>x.ParentCategory).WithMany(x=>x.Children).HasForeignKey(x=>x.ParentCategoryId).OnDelete(DeleteBehavior.Restrict);
   b.Entity<ProductCategory>().HasOne(x=>x.ParentCategory).WithMany(x=>x.Children).HasForeignKey(x=>x.ParentCategoryId).OnDelete(DeleteBehavior.Restrict);
   b.Entity<Product>().HasOne(x=>x.ProductCategory).WithMany(x=>x.Products).HasForeignKey(x=>x.ProductCategoryId).OnDelete(DeleteBehavior.SetNull);
+  b.Entity<ServiceCategory>().HasOne(x=>x.ParentServiceCategory).WithMany(x=>x.Children).HasForeignKey(x=>x.ParentServiceCategoryId).OnDelete(DeleteBehavior.Restrict);
   b.Entity<Service>().HasOne(x=>x.ServiceCategory).WithMany(x=>x.Services).HasForeignKey(x=>x.ServiceCategoryId).OnDelete(DeleteBehavior.SetNull);
   b.Entity<SupplierCategory>().HasKey(x=>new {x.SupplierId,x.CategoryId}); b.Entity<SupplierArea>().HasKey(x=>new {x.SupplierId,x.AreaId});
  }
