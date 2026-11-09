@@ -10,6 +10,7 @@ namespace SupplierDirectory.Controllers;
 [Authorize(Roles = "Admin")]
 public sealed class ServicesDashboardController(AppDbContext db, IFileStorageService fileStorage) : Controller
 {
+    private async Task PopulateCategories(ServiceFormViewModel model) => model.AvailableCategories = await db.ServiceCategories.AsNoTracking().Where(c => c.IsActive).OrderBy(c => c.Name).ToListAsync();
     [HttpGet("dashboard/services")]
     public async Task<IActionResult> Index([FromQuery] ServiceListQuery q)
     {
@@ -17,6 +18,8 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
         
         if (!string.IsNullOrWhiteSpace(q.Search))
             query = query.Where(x => x.Name.Contains(q.Search) || (x.Description != null && x.Description.Contains(q.Search)));
+        if (q.ServiceCategoryId.HasValue)
+            query = query.Where(x => x.ServiceCategoryId == q.ServiceCategoryId);
 
         var total = await query.CountAsync();
         var items = await query.OrderBy(x => x.DisplayOrder)
@@ -29,14 +32,16 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
         ViewBag.Page = q.Page;
         ViewBag.PageSize = q.PageSize;
         ViewBag.TotalPages = (int)Math.Ceiling(total / (double)q.PageSize);
+        ViewBag.ServiceCategoryId = q.ServiceCategoryId;
+        ViewBag.ServiceCategories = await db.ServiceCategories.AsNoTracking().Where(c => c.IsActive).OrderBy(c => c.Name).ToListAsync();
 
         return View(items);
     }
 
     [HttpGet("dashboard/services/create")]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        return View("Form", new ServiceFormViewModel());
+        var model = new ServiceFormViewModel(); await PopulateCategories(model); return View("Form", model);
     }
 
     [HttpPost("dashboard/services/create")]
@@ -51,6 +56,7 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
 
         if (!ModelState.IsValid)
         {
+            await PopulateCategories(model);
             return View("Form", model);
         }
 
@@ -60,6 +66,7 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
             Description = model.Description?.Trim(),
             Details = model.Details?.Trim(),
             DisplayOrder = model.DisplayOrder,
+            ServiceCategoryId = model.ServiceCategoryId,
             IsActive = model.IsActive
         };
 
@@ -95,9 +102,11 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
             Description = service.Description,
             Details = service.Details,
             DisplayOrder = service.DisplayOrder,
+            ServiceCategoryId = service.ServiceCategoryId,
             IsActive = service.IsActive,
             ExistingImages = service.Images.OrderBy(i => i.DisplayOrder).ToList()
         };
+        await PopulateCategories(vm);
         return View("Form", vm);
     }
 
@@ -113,6 +122,7 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
 
         if (!ModelState.IsValid)
         {
+            await PopulateCategories(model);
             return View("Form", model);
         }
 
@@ -123,6 +133,7 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
         service.Description = model.Description?.Trim();
         service.Details = model.Details?.Trim();
         service.DisplayOrder = model.DisplayOrder;
+        service.ServiceCategoryId = model.ServiceCategoryId;
         service.IsActive = model.IsActive;
         service.UpdatedAt = DateTime.UtcNow;
 

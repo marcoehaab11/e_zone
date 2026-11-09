@@ -293,12 +293,13 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
     }
 
     [HttpGet("services")]
-    public async Task<IActionResult> Services([FromQuery] PageQuery q)
+    public async Task<IActionResult> Services([FromQuery] PageQuery q, [FromQuery] int? categoryId)
     {
         var query = db.Services.AsNoTracking().Where(x => x.IsActive && !x.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(q.Search))
             query = query.Where(x => x.Name.Contains(q.Search) || (x.Description != null && x.Description.Contains(q.Search)));
+        if (categoryId.HasValue) query = query.Where(x => x.ServiceCategoryId == categoryId);
 
         var total = await query.CountAsync();
         var items = await query.OrderBy(x => x.DisplayOrder)
@@ -311,11 +312,29 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
                 x.Description,
                 x.Details,
                 x.DisplayOrder,
+                x.ServiceCategoryId,
+                x.ServiceCategory != null ? x.ServiceCategory.Name : null,
                 x.Images.OrderBy(i => i.DisplayOrder).Select(i => new { i.Id, i.ImageUrl, i.DisplayOrder })
             )).ToListAsync();
 
         var p = new PageResult<ServiceDto>(items, q.Page, q.PageSize, total);
         return Ok(new ApiResponse<object>(true, "تم استرجاع البيانات", p.Items, p.Meta));
+    }
+
+    [HttpGet("service-categories")]
+    public async Task<IActionResult> ServiceCategories([FromQuery] PageQuery q)
+    {
+        var query = db.ServiceCategories.AsNoTracking().Where(x => x.IsActive && !x.IsDeleted);
+        if (!string.IsNullOrWhiteSpace(q.Search)) query = query.Where(x => x.Name.Contains(q.Search) || (x.Description ?? "").Contains(q.Search));
+        return await Page(query.OrderBy(x => x.Name).Select(x => new ServiceCategoryDto(x.Id, x.Name, x.Description, x.Services.Count(s => !s.IsDeleted && s.IsActive))), q);
+    }
+
+    [HttpGet("service-categories/{id:int}")]
+    public async Task<IActionResult> ServiceCategory(int id)
+    {
+        var category = await db.ServiceCategories.AsNoTracking().Where(x => x.Id == id && x.IsActive && !x.IsDeleted)
+            .Select(x => new ServiceCategoryDto(x.Id, x.Name, x.Description, x.Services.Count(s => !s.IsDeleted && s.IsActive))).FirstOrDefaultAsync();
+        return category is null ? NotFound(new ApiResponse<object>(false, "تصنيف الخدمة غير موجود", null)) : Ok(new ApiResponse<object>(true, "تم الاسترجاع", category));
     }
 
     [HttpGet("services/{id:int}")]
@@ -328,6 +347,8 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
                 x.Description,
                 x.Details,
                 x.DisplayOrder,
+                x.ServiceCategoryId,
+                x.ServiceCategory != null ? x.ServiceCategory.Name : null,
                 x.Images.OrderBy(i => i.DisplayOrder).Select(i => new { i.Id, i.ImageUrl, i.DisplayOrder })
             )).FirstOrDefaultAsync();
 

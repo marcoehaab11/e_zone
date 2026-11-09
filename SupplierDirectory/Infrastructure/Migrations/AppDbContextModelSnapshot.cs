@@ -675,6 +675,9 @@ namespace SupplierDirectory.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("ServiceCategoryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -682,7 +685,44 @@ namespace SupplierDirectory.Infrastructure.Migrations
 
                     b.HasIndex("Name");
 
+                    b.HasIndex("ServiceCategoryId");
+
                     b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("SupplierDirectory.Domain.ServiceCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("ServiceCategories");
                 });
 
             modelBuilder.Entity("SupplierDirectory.Domain.ServiceImage", b =>
@@ -1010,6 +1050,16 @@ namespace SupplierDirectory.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("SupplierDirectory.Domain.Service", b =>
+                {
+                    b.HasOne("SupplierDirectory.Domain.ServiceCategory", "ServiceCategory")
+                        .WithMany("Services")
+                        .HasForeignKey("ServiceCategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ServiceCategory");
+                });
+
             modelBuilder.Entity("SupplierDirectory.Domain.ServiceImage", b =>
                 {
                     b.HasOne("SupplierDirectory.Domain.Service", "Service")
@@ -1114,6 +1164,11 @@ namespace SupplierDirectory.Infrastructure.Migrations
             modelBuilder.Entity("SupplierDirectory.Domain.Service", b =>
                 {
                     b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("SupplierDirectory.Domain.ServiceCategory", b =>
+                {
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("SupplierDirectory.Domain.Supplier", b =>

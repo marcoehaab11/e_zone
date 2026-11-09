@@ -30,6 +30,14 @@
                     <input asp-for="DisplayOrder" type="number" class="form-control" placeholder="0" />
                     <span asp-validation-for="DisplayOrder" class="text-danger small mt-1 d-block"></span>
                 </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ServiceCategoryId" class="form-label fw-bold">تصنيف الخدمة</label>
+                    <select asp-for="ServiceCategoryId" class="form-select">
+                        <option value="">بدون تصنيف</option>
+                        @foreach (var category in Model.AvailableCategories) { <option value="@category.Id">@category.Name</option> }
+                    </select>
+                    <span asp-validation-for="ServiceCategoryId" class="text-danger small mt-1 d-block"></span>
+                </div>
             </div>
             
             <div class="mb-3">

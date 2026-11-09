@@ -4,6 +4,8 @@
     var search = ViewBag.Search as string;
     var pageNum = (int)ViewBag.Page;
     var totalPages = (int)ViewBag.TotalPages;
+    var serviceCategoryId = ViewBag.ServiceCategoryId as int?;
+    var serviceCategories = ViewBag.ServiceCategories as IEnumerable<SupplierDirectory.Domain.ServiceCategory> ?? Enumerable.Empty<SupplierDirectory.Domain.ServiceCategory>();
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -19,13 +21,19 @@
 <div class="card shadow-sm border-0 rounded-4 mb-4">
     <div class="card-body">
         <form method="get" class="row g-3">
-            <div class="col-md-10">
+            <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass"></i></span>
                     <input type="text" name="Search" class="form-control border-start-0" placeholder="ابحث باسم الخدمة أو الوصف..." value="@search">
                 </div>
             </div>
-            <div class="col-md-2 d-grid">
+            <div class="col-md-3">
+                <select name="ServiceCategoryId" class="form-select rounded-pill px-4">
+                    <option value="">كل التصنيفات</option>
+                    @foreach (var category in serviceCategories) { <option value="@category.Id" selected="@(serviceCategoryId == category.Id)">@category.Name</option> }
+                </select>
+            </div>
+            <div class="col-md-3 d-grid">
                 <button type="submit" class="btn btn-secondary rounded-pill"><i class="fa-solid fa-filter ms-1"></i> بحث</button>
             </div>
         </form>
@@ -40,6 +48,7 @@
                     <tr>
                         <th class="ps-4" style="width: 80px;">الصورة</th>
                         <th>اسم الخدمة</th>
+                        <th>التصنيف</th>
                         <th>الوصف</th>
                         <th>عدد الصور</th>
                         <th>ترتيب العرض</th>
@@ -69,6 +78,7 @@
                                     <span class="fw-bold text-dark fs-6">@item.Name</span>
                                     <div class="text-muted small">أضيفت في: @item.CreatedAt.ToString("yyyy-MM-dd")</div>
                                 </td>
+                                <td>@(item.ServiceCategory?.Name ?? "—")</td>
                                 <td>
                                     <span class="text-muted small text-truncate d-inline-block" style="max-width: 250px;">
                                         @(string.IsNullOrWhiteSpace(item.Description) ? "—" : item.Description)
@@ -119,7 +129,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-5">
+                            <td colspan="8" class="text-center text-muted py-5">
                                 <i class="fa-solid fa-screwdriver-wrench fs-2 mb-2 d-block opacity-50"></i>
                                 لا توجد خدمات مضافة حتى الآن
                             </td>
@@ -138,7 +148,7 @@
                     @for (var p = 1; p <= totalPages; p++)
                     {
                         <li class="page-item @(p == pageNum ? "active" : "")">
-                            <a class="page-link" href="?Page=@p&Search=@search">@p</a>
+                            <a class="page-link" href="?Page=@p&Search=@search&ServiceCategoryId=@serviceCategoryId">@p</a>
                         </li>
                     }
                 </ul>

@@ -46,9 +46,19 @@ public sealed class Service : AuditableEntity
     public string? Description { get; set; }
     public string? Details { get; set; }
     public int DisplayOrder { get; set; }
+    public int? ServiceCategoryId { get; set; }
+    public ServiceCategory? ServiceCategory { get; set; }
     public bool IsActive { get; set; } = true;
     
     public ICollection<ServiceImage> Images { get; set; } = [];
+}
+
+public sealed class ServiceCategory : AuditableEntity
+{
+    public required string Name { get; set; }
+    public string? Description { get; set; }
+    public bool IsActive { get; set; } = true;
+    public ICollection<Service> Services { get; set; } = [];
 }
 
 public sealed class ServiceImage : AuditableEntity

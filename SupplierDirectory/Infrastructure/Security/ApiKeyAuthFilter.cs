@@ -19,7 +19,7 @@ public class ApiKeyAuthAttribute : Attribute, IAsyncActionFilter
         var configuration = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
         var apiKey = configuration.GetValue<string>("ApiSettings:MobileApiKey");
 
-        if (!apiKey.Equals(extractedApiKey))
+        if (string.IsNullOrWhiteSpace(apiKey) || !string.Equals(apiKey, extractedApiKey.ToString(), StringComparison.Ordinal))
         {
             context.Result = new UnauthorizedObjectResult(new { success = false, message = "رمز المرور (API Key) غير صحيح." });
             return;

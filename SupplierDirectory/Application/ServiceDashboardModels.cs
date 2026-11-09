@@ -8,6 +8,7 @@ namespace SupplierDirectory.Application;
 public class ServiceListQuery
 {
     public string? Search { get; set; }
+    public int? ServiceCategoryId { get; set; }
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 20;
 }
@@ -27,6 +28,9 @@ public class ServiceFormViewModel
     public string? Details { get; set; }
     
     public int DisplayOrder { get; set; }
+    [Display(Name = "تصنيف الخدمة")]
+    public int? ServiceCategoryId { get; set; }
+    public IReadOnlyList<ServiceCategory> AvailableCategories { get; set; } = [];
     
     public bool IsActive { get; set; } = true;
     
