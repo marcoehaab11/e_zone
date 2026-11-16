@@ -34,6 +34,7 @@ public sealed class DashboardController(AppDbContext db, IFileStorageService fil
         {
             Id = info.Id,
             CompanyName = info.CompanyName,
+            CompanyNameEn = info.CompanyNameEn,
             LogoUrl = info.LogoUrl,
             CoverImageUrl = info.CoverImageUrl,
             ContactPhone = info.ContactPhone,
@@ -41,10 +42,15 @@ public sealed class DashboardController(AppDbContext db, IFileStorageService fil
             Email = info.Email,
             Website = info.Website,
             About = info.About,
+            AboutEn = info.AboutEn,
             Mission = info.Mission,
+            MissionEn = info.MissionEn,
             Vision = info.Vision,
+            VisionEn = info.VisionEn,
             PlatformDescription = info.PlatformDescription,
+            PlatformDescriptionEn = info.PlatformDescriptionEn,
             PlatformServices = info.PlatformServices,
+            PlatformServicesEn = info.PlatformServicesEn,
             SocialLinksJson = info.SocialLinksJson,
             ExistingCoverImages = info.CoverImages.OrderBy(i => i.DisplayOrder).ToList(),
             ExistingImages = info.Images.OrderBy(i => i.DisplayOrder).ToList(),
@@ -100,11 +106,17 @@ public sealed class DashboardController(AppDbContext db, IFileStorageService fil
         }
 
         existing.CompanyName = model.CompanyName?.Trim();
+        existing.CompanyNameEn = model.CompanyNameEn?.Trim();
         existing.About = model.About?.Trim();
+        existing.AboutEn = model.AboutEn?.Trim();
         existing.Mission = model.Mission?.Trim();
+        existing.MissionEn = model.MissionEn?.Trim();
         existing.Vision = model.Vision?.Trim();
+        existing.VisionEn = model.VisionEn?.Trim();
         existing.PlatformDescription = model.PlatformDescription?.Trim();
+        existing.PlatformDescriptionEn = model.PlatformDescriptionEn?.Trim();
         existing.PlatformServices = model.PlatformServices?.Trim();
+        existing.PlatformServicesEn = model.PlatformServicesEn?.Trim();
         existing.ContactPhone = model.ContactPhone?.Trim();
         existing.WhatsApp = model.WhatsApp?.Trim();
         existing.Email = model.Email?.Trim();

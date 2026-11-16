@@ -60,7 +60,9 @@ public sealed class AdsDashboardController(AppDbContext db, IFileStorageService 
         var ad = new Advertisement
         {
             Title = model.Title.Trim(),
+            TitleEn = model.TitleEn?.Trim(),
             Description = model.Description?.Trim(),
+            DescriptionEn = model.DescriptionEn?.Trim(),
             Link = model.Link?.Trim(),
             StartDate = model.StartDate,
             EndDate = model.EndDate,
@@ -90,7 +92,9 @@ public sealed class AdsDashboardController(AppDbContext db, IFileStorageService 
         {
             Id = ad.Id,
             Title = ad.Title,
+            TitleEn = ad.TitleEn,
             Description = ad.Description,
+            DescriptionEn = ad.DescriptionEn,
             Link = ad.Link,
             StartDate = ad.StartDate,
             EndDate = ad.EndDate,
@@ -117,7 +121,9 @@ public sealed class AdsDashboardController(AppDbContext db, IFileStorageService 
         if (ad == null) return NotFound();
 
         ad.Title = model.Title.Trim();
+        ad.TitleEn = model.TitleEn?.Trim();
         ad.Description = model.Description?.Trim();
+        ad.DescriptionEn = model.DescriptionEn?.Trim();
         ad.Link = model.Link?.Trim();
         ad.StartDate = model.StartDate;
         ad.EndDate = model.EndDate;

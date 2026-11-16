@@ -20,11 +20,19 @@
                 <input asp-for="Title" class="form-control" required placeholder="أدخل عنوان أو اسم للإعلان...">
                 <span asp-validation-for="Title" class="text-danger small mt-1 d-block"></span>
             </div>
+            <div class="mb-3" dir="ltr">
+                <label asp-for="TitleEn" class="form-label fw-bold">Advertisement title (English)</label>
+                <input asp-for="TitleEn" class="form-control" placeholder="Enter the English advertisement title">
+            </div>
             
             <div class="mb-3">
                 <label asp-for="Description" class="form-label fw-bold">الوصف</label>
                 <textarea asp-for="Description" class="form-control" rows="3" placeholder="وصف إضافي للإعلان (اختياري)"></textarea>
                 <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+            </div>
+            <div class="mb-3" dir="ltr">
+                <label asp-for="DescriptionEn" class="form-label fw-bold">Description (English)</label>
+                <textarea asp-for="DescriptionEn" class="form-control" rows="3"></textarea>
             </div>
             
             <div class="mb-3">

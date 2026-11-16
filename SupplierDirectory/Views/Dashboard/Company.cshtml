@@ -24,6 +24,7 @@
                     <div class="mb-3">
                         <label asp-for="CompanyName" class="form-label fw-bold">اسم الشركة / المنصة</label>
                         <input asp-for="CompanyName" class="form-control">
+                        <div class="mt-2" dir="ltr"><label asp-for="CompanyNameEn" class="form-label fw-bold">Company / platform name (English)</label><input asp-for="CompanyNameEn" class="form-control"></div>
                         <span asp-validation-for="CompanyName" class="text-danger small mt-1 d-block"></span>
                     </div>
                     
@@ -78,16 +79,19 @@
                     <div class="mb-3">
                         <label asp-for="About" class="form-label fw-bold">عن الشركة</label>
                         <textarea asp-for="About" class="form-control" rows="3"></textarea>
+                        <div class="mt-2" dir="ltr"><label asp-for="AboutEn" class="form-label fw-bold">About (English)</label><textarea asp-for="AboutEn" class="form-control" rows="3"></textarea></div>
                     </div>
                     
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="Mission" class="form-label fw-bold">رسالتنا (Mission)</label>
                             <textarea asp-for="Mission" class="form-control" rows="3"></textarea>
+                            <div class="mt-2" dir="ltr"><label asp-for="MissionEn" class="form-label fw-bold">Mission (English)</label><textarea asp-for="MissionEn" class="form-control" rows="3"></textarea></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="Vision" class="form-label fw-bold">رؤيتنا (Vision)</label>
                             <textarea asp-for="Vision" class="form-control" rows="3"></textarea>
+                            <div class="mt-2" dir="ltr"><label asp-for="VisionEn" class="form-label fw-bold">Vision (English)</label><textarea asp-for="VisionEn" class="form-control" rows="3"></textarea></div>
                         </div>
                     </div>
 
@@ -95,10 +99,12 @@
                         <div class="col-md-6 mb-3">
                             <label asp-for="PlatformDescription" class="form-label fw-bold">وصف المنصة</label>
                             <textarea asp-for="PlatformDescription" class="form-control" rows="3"></textarea>
+                            <div class="mt-2" dir="ltr"><label asp-for="PlatformDescriptionEn" class="form-label fw-bold">Platform description (English)</label><textarea asp-for="PlatformDescriptionEn" class="form-control" rows="3"></textarea></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="PlatformServices" class="form-label fw-bold">خدمات المنصة</label>
                             <textarea asp-for="PlatformServices" class="form-control" rows="3"></textarea>
+                            <div class="mt-2" dir="ltr"><label asp-for="PlatformServicesEn" class="form-label fw-bold">Platform services (English)</label><textarea asp-for="PlatformServicesEn" class="form-control" rows="3"></textarea></div>
                         </div>
                     </div>
                 </div>

@@ -12,6 +12,7 @@ public class CompanyFormViewModel
     [Required(ErrorMessage = "اسم الشركة مطلوب")]
     [StringLength(200, ErrorMessage = "اسم الشركة يجب ألا يتجاوز 200 حرف")]
     public string? CompanyName { get; set; }
+    public string? CompanyNameEn { get; set; }
 
     [MaxFileSize(5 * 1024 * 1024)]
     [AllowedExtensions(new[] { ".jpg", ".png", ".jpeg", ".webp" })]
@@ -43,10 +44,15 @@ public class CompanyFormViewModel
     public string? Website { get; set; }
 
     public string? About { get; set; }
+    public string? AboutEn { get; set; }
     public string? Mission { get; set; }
+    public string? MissionEn { get; set; }
     public string? Vision { get; set; }
+    public string? VisionEn { get; set; }
     public string? PlatformDescription { get; set; }
+    public string? PlatformDescriptionEn { get; set; }
     public string? PlatformServices { get; set; }
+    public string? PlatformServicesEn { get; set; }
     public string? SocialLinksJson { get; set; }
 
     [MaxFileSize(5 * 1024 * 1024)]
@@ -72,8 +78,10 @@ public class AdvertisementFormViewModel
     [Required(ErrorMessage = "عنوان الإعلان مطلوب")]
     [StringLength(200, ErrorMessage = "العنوان طويل جداً")]
     public string Title { get; set; } = string.Empty;
+    [StringLength(200)] public string? TitleEn { get; set; }
     
     public string? Description { get; set; }
+    public string? DescriptionEn { get; set; }
     
     [MaxFileSize(5 * 1024 * 1024)]
     [AllowedExtensions(new[] { ".jpg", ".png", ".jpeg", ".webp", ".gif" })]
