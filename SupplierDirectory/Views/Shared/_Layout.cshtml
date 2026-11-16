@@ -49,38 +49,38 @@
                     <i class="fa-solid fa-chevron-down chevron-icon"></i>
                 </a>
                 <div class="collapse sidebar-submenu" id="areasSubmenu" data-bs-parent="#sidebarMenu">
-                    <a href="/dashboard/areas" class="list-group-item sidebar-link">المناطق المتاحة</a>
-                    <a href="/dashboard/areas/create" class="list-group-item sidebar-link">إضافة منطقة</a>
+                    <a href="/dashboard/areas" class="list-group-item sidebar-link">@T.Get("المناطق المتاحة", "Available areas")</a>
+                    <a href="/dashboard/areas/create" class="list-group-item sidebar-link">@T.Get("إضافة منطقة", "Add area")</a>
                 </div>
 
                 <!-- Supplier Categories -->
                 <a href="#supplierCatsSubmenu" data-bs-toggle="collapse" class="list-group-item sidebar-link has-submenu d-flex justify-content-between align-items-center">
-                    <div><i class="fa-solid fa-layer-group"></i> تصنيفات الموردين</div>
+                    <div><i class="fa-solid fa-layer-group"></i> @T.Get("تصنيفات الموردين", "Supplier categories")</div>
                     <i class="fa-solid fa-chevron-down chevron-icon"></i>
                 </a>
                 <div class="collapse sidebar-submenu" id="supplierCatsSubmenu" data-bs-parent="#sidebarMenu">
-                    <a href="/dashboard/categories-list" class="list-group-item sidebar-link">قائمة تصنيفات الموردين</a>
-                    <a href="/dashboard/categories-list/create" class="list-group-item sidebar-link">إضافة تصنيف مورد</a>
+                    <a href="/dashboard/categories-list" class="list-group-item sidebar-link">@T.Get("قائمة تصنيفات الموردين", "Supplier category list")</a>
+                    <a href="/dashboard/categories-list/create" class="list-group-item sidebar-link">@T.Get("إضافة تصنيف مورد", "Add supplier category")</a>
                 </div>
 
                 <!-- Product Categories -->
                 <a href="#productCatsSubmenu" data-bs-toggle="collapse" class="list-group-item sidebar-link has-submenu d-flex justify-content-between align-items-center">
-                    <div><i class="fa-solid fa-tags"></i> تصنيفات المنتجات</div>
+                    <div><i class="fa-solid fa-tags"></i> @T.Get("تصنيفات المنتجات", "Product categories")</div>
                     <i class="fa-solid fa-chevron-down chevron-icon"></i>
                 </a>
                 <div class="collapse sidebar-submenu" id="productCatsSubmenu" data-bs-parent="#sidebarMenu">
-                    <a href="/dashboard/product-categories" class="list-group-item sidebar-link">قائمة تصنيفات المنتجات</a>
-                    <a href="/dashboard/product-categories/create" class="list-group-item sidebar-link">إضافة تصنيف منتج</a>
+                    <a href="/dashboard/product-categories" class="list-group-item sidebar-link">@T.Get("قائمة تصنيفات المنتجات", "Product category list")</a>
+                    <a href="/dashboard/product-categories/create" class="list-group-item sidebar-link">@T.Get("إضافة تصنيف منتج", "Add product category")</a>
                 </div>
 
                 <!-- Products -->
                 <a href="#productsSubmenu" data-bs-toggle="collapse" class="list-group-item sidebar-link has-submenu d-flex justify-content-between align-items-center">
-                    <div><i class="fa-solid fa-box-open"></i> إدارة المنتجات</div>
+                    <div><i class="fa-solid fa-box-open"></i> @T.Get("إدارة المنتجات", "Products")</div>
                     <i class="fa-solid fa-chevron-down chevron-icon"></i>
                 </a>
                 <div class="collapse sidebar-submenu" id="productsSubmenu" data-bs-parent="#sidebarMenu">
-                    <a href="/dashboard/products" class="list-group-item sidebar-link">قائمة المنتجات</a>
-                    <a href="/dashboard/products/create" class="list-group-item sidebar-link">إضافة منتج</a>
+                    <a href="/dashboard/products" class="list-group-item sidebar-link">@T.Get("قائمة المنتجات", "Product list")</a>
+                    <a href="/dashboard/products/create" class="list-group-item sidebar-link">@T.Get("إضافة منتج", "Add product")</a>
                 </div>
 
                 <!-- Services -->
@@ -97,22 +97,22 @@
 
                 <!-- Ads -->
                 <a href="#adsSubmenu" data-bs-toggle="collapse" class="list-group-item sidebar-link has-submenu d-flex justify-content-between align-items-center">
-                    <div><i class="fa-solid fa-bullhorn"></i> إدارة الإعلانات</div>
+                    <div><i class="fa-solid fa-bullhorn"></i> @T.Get("إدارة الإعلانات", "Advertisements")</div>
                     <i class="fa-solid fa-chevron-down chevron-icon"></i>
                 </a>
                 <div class="collapse sidebar-submenu" id="adsSubmenu" data-bs-parent="#sidebarMenu">
-                    <a href="/dashboard/ads" class="list-group-item sidebar-link">الإعلانات</a>
-                    <a href="/dashboard/ads/create" class="list-group-item sidebar-link">إضافة إعلان</a>
+                    <a href="/dashboard/ads" class="list-group-item sidebar-link">@T.Get("الإعلانات", "Advertisements")</a>
+                    <a href="/dashboard/ads/create" class="list-group-item sidebar-link">@T.Get("إضافة إعلان", "Add advertisement")</a>
                 </div>
 
                 <!-- Company Info -->
                 <a href="/dashboard/company" class="list-group-item sidebar-link border-top border-secondary pt-3">
-                    <i class="fa-solid fa-building"></i> معلومات المنصة
+                    <i class="fa-solid fa-building"></i> @T.Get("معلومات المنصة", "Platform information")
                 </a>
 
                 <!-- Users -->
                 <a href="/dashboard/users" class="list-group-item sidebar-link">
-                    <i class="fa-solid fa-users-cog"></i> إدارة المستخدمين
+                    <i class="fa-solid fa-users-cog"></i> @T.Get("إدارة المستخدمين", "User management")
                 </a>
 
                 <form method="post" action="/culture/set" class="m-0 px-3 py-2">
@@ -126,7 +126,7 @@
                 <form method="post" action="/logout" class="m-0 mt-auto border-top border-secondary">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="list-group-item sidebar-link text-danger w-100 text-start">
-                        <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج
+                        <i class="fa-solid fa-right-from-bracket"></i> @T.Get("تسجيل الخروج", "Sign out")
                     </button>
                 </form>
             </div>
@@ -151,7 +151,7 @@
                     <form method="post" action="/logout" class="m-0">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">
-                            <i class="fa-solid fa-right-from-bracket ms-1"></i> خروج
+                            <i class="fa-solid fa-right-from-bracket ms-1"></i> @T.Get("خروج", "Sign out")
                         </button>
                     </form>
                 </div>

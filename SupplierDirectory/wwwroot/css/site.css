@@ -131,10 +131,26 @@ body {
 }
 
 /* Submenu Links */
+.sidebar-submenu {
+    width: 100%;
+}
+
+.sidebar-submenu.show {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+}
+
 .sidebar-submenu .sidebar-link {
+    display: flex;
+    flex: 0 0 100%;
+    width: 100%;
+    min-height: 2.7rem;
     padding: 0.6rem 3rem 0.6rem 1rem;
     font-weight: 400;
     font-size: 0.95rem;
+    text-align: start;
+    white-space: normal;
     background-color: #151e2e !important;
     border-right: 2px solid transparent !important;
 }
@@ -143,6 +159,18 @@ body {
     background-color: #1e293b !important;
     color: #fff !important;
     border-right: 2px solid #3b82f6 !important;
+}
+
+html[dir="ltr"] .sidebar-link i.fa-solid,
+html[dir="ltr"] .sidebar-link i.fa-regular {
+    margin-right: 10px;
+    margin-left: 0;
+}
+
+html[dir="ltr"] .sidebar-submenu .sidebar-link {
+    justify-content: flex-start;
+    padding: 0.6rem 1rem 0.6rem 3rem;
+    text-align: left;
 }
 
 .has-submenu .chevron-icon {
