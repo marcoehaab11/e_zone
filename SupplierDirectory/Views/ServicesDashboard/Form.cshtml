@@ -1,4 +1,5 @@
 @model SupplierDirectory.Application.ServiceFormViewModel
+@inject SupplierDirectory.Infrastructure.Localization.IUiText T
 @{
     var isEdit = Model.Id.HasValue && Model.Id > 0;
     ViewData["Title"] = isEdit ? "تعديل الخدمة" : "إضافة خدمة جديدة";
@@ -39,7 +40,7 @@
                     <label asp-for="ServiceCategoryId" class="form-label fw-bold">تصنيف الخدمة</label>
                     <select asp-for="ServiceCategoryId" class="form-select">
                         <option value="">بدون تصنيف</option>
-                        @foreach (var category in Model.AvailableCategories) { <option value="@category.Id">@category.Name</option> }
+                        @foreach (var category in Model.AvailableCategories) { <option value="@category.Id">@(T.IsEnglish ? category.NameEn ?? category.Name : category.Name)</option> }
                     </select>
                     <span asp-validation-for="ServiceCategoryId" class="text-danger small mt-1 d-block"></span>
                 </div>

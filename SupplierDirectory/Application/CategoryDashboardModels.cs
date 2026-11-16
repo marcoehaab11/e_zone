@@ -34,7 +34,7 @@ public sealed class CategoryListItem
 public sealed class CategoryListViewModel
 {
     public required IReadOnlyList<CategoryListItem> Items { get; set; }
-    public required IReadOnlyList<(int Id, string Name)> Parents { get; set; }
+    public required IReadOnlyList<(int Id, string Name, string? NameEn)> Parents { get; set; }
     public required CategoryListQuery Query { get; set; }
     public int TotalCount { get; set; }
     public int TotalPages => Math.Max(1, (int)Math.Ceiling(TotalCount / (double)Query.PageSize));
@@ -63,7 +63,7 @@ public sealed class CategoryFormViewModel
 
     public string? ExistingImageUrl { get; set; }
 
-    public IReadOnlyList<(int Id, string Name)> Parents { get; set; } = [];
+    public IReadOnlyList<(int Id, string Name, string? NameEn)> Parents { get; set; } = [];
 }
 
 // =================== تصنيفات المنتجات (Product Categories) ===================
@@ -94,7 +94,7 @@ public sealed class ProductCategoryListItem
 public sealed class ProductCategoryListViewModel
 {
     public required IReadOnlyList<ProductCategoryListItem> Items { get; set; }
-    public required IReadOnlyList<(int Id, string Name)> Parents { get; set; }
+    public required IReadOnlyList<(int Id, string Name, string? NameEn)> Parents { get; set; }
     public required ProductCategoryListQuery Query { get; set; }
     public int TotalCount { get; set; }
     public int TotalPages => Math.Max(1, (int)Math.Ceiling(TotalCount / (double)Query.PageSize));
@@ -123,5 +123,5 @@ public sealed class ProductCategoryFormViewModel
 
     public string? ExistingImageUrl { get; set; }
 
-    public IReadOnlyList<(int Id, string Name)> Parents { get; set; } = [];
+    public IReadOnlyList<(int Id, string Name, string? NameEn)> Parents { get; set; } = [];
 }

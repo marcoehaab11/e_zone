@@ -56,6 +56,20 @@
     'هل أنت متأكد من حذف هذا التصنيف؟': 'Are you sure you want to delete this category?', 'هل تريد حذف التصنيف؟': 'Do you want to delete this category?',
     'إضافة تصنيف جديد': 'Add category', 'إضافة تصنيف': 'Add category', 'إضافة تصنيف خدمة': 'Add service category',
     'بحث باسم أو وصف التصنيف': 'Search by category name or description', 'التصنيف الأب': 'Parent category',
+    'إدارة تصنيفات الموردين': 'Supplier category management', 'تنظيم وهيكلة مجالات وتصنيفات الموردين الرئيسية والفرعية': 'Organize main and sub-supplier categories.',
+    'بحث باسم التصنيف أو الوصف...': 'Search by category name or description...', 'اسم تصنيف المنتج': 'Product category name',
+    'تعديل تصنيف المورد': 'Edit supplier category', 'إضافة تصنيف مورد جديد': 'Add supplier category',
+    'تحديث بيانات وصورة ومستوى التصنيف': 'Update category details, image, and level', 'إنشاء تصنيف رئيسي أو فرعي جديد لموردي المنصة': 'Create a new main or subcategory for platform suppliers.',
+    'تعديل تصنيف المنتج': 'Edit product category', 'إضافة تصنيف منتج جديد': 'Add product category',
+    'تحديث بيانات وصورة ومستوى تصنيف المنتج': 'Update product category details, image, and level', 'إنشاء تصنيف رئيسي أو فرعي جديد للمنتجات': 'Create a new main or subcategory for products.',
+    'أدخل اسم التصنيف (مثال: أجهزة إلكترونية، مقاولات، ملابس)...': 'Enter a category name (for example: electronics, contracting, clothing)...',
+    'أدخل اسم التصنيف (مثال: هواتف ذكية، أدوات كهربائية، قطع غيار)...': 'Enter a category name (for example: smartphones, electrical tools, spare parts)...',
+    'التصنيف الرئيسي (الأب)': 'Parent category', '(مستوى رئيسي - بدون تصنيف أم)': '(Main level — no parent category)',
+    'اتركه فارغاً إذا كان هذا تصنيفاً رئيسياً، أو اختر التصنيف الرئيسي الذي يندرج تحته.': 'Leave empty for a main category, or choose the parent category.',
+    'نبذة توضيحية عن مجالات ونشاط هذا التصنيف (اختياري)...': 'A brief description of this category and its activity (optional)...',
+    'نبذة توضيحية عن المنتجات التي تندرج تحت هذا التصنيف (اختياري)...': 'A brief description of products in this category (optional)...',
+    'صورة / أيقونة التصنيف': 'Category image / icon', 'الصيغ المدعومة: JPG, PNG, WEBP (الحجم الأقصى: 5 ميجابايت).': 'Supported formats: JPG, PNG, WEBP (maximum 5 MB).',
+    'معاينة الصورة:': 'Image preview:', 'التصنيف نشط ويظهر في المنصة': 'Category is active and visible on the platform',
 
     // Products
     'قائمة المنتجات': 'Product list', 'إدارة وعرض المنتجات وتصنيفاتها والمناطق التابعة لها': 'Manage products, their categories, and their areas.',
@@ -65,6 +79,9 @@
     'رفع صور جديدة (اختياري - يمكنك اختيار أكثر من صورة)': 'Upload new images (optional — you can choose more than one image)',
     'الصور الحالية:': 'Current images:', 'حفظ المنتج': 'Save product', 'هل أنت متأكد من حذف هذا المنتج؟': 'Are you sure you want to delete this product?',
     'هل أنت متأكد من حذف هذه الصورة؟': 'Are you sure you want to delete this image?', 'حدث خطأ': 'An error occurred', 'حدث خطأ أثناء حذف الصورة': 'An error occurred while deleting the image',
+    'إدخال تفاصيل المنتج وتصنيفه والمنطقة والصور': 'Enter product details, category, area, and images.',
+    'أدخل اسم المنتج...': 'Enter the product name...', 'وصف موجز للمنتج...': 'A short product description...',
+    'المواصفات الفنية أو التفاصيل الكاملة...': 'Technical specifications or full details...',
 
     // Services
     'إدارة قسم خدماتنا': 'Service management', 'إضافة وتعديل الخدمات التي تقدمها المنصة وصورها وتفاصيلها': 'Add and manage platform services, images, and details.',
@@ -73,6 +90,15 @@
     'صور الخدمة': 'Service images', 'رفع صور جديدة (اختياري - يمكنك اختيار صورة واحدة أو أكثر)': 'Upload new images (optional — choose one or more images)',
     'الصيغ المدعومة: JPG, PNG, WEBP (الحجم الأقصى لكل صورة: 5 ميجابايت).': 'Supported formats: JPG, PNG, WEBP (maximum 5 MB per image).',
     'الصور الحالية للخدمة:': 'Current service images:', 'هل أنت متأكد من حذف هذه الخدمة؟': 'Are you sure you want to delete this service?',
+    'تعديل الخدمة': 'Edit service', 'تحديث بيانات وصور وتفاصيل الخدمة': 'Update service details and images',
+    'إدخال خدمة جديدة وعرضها في تطبيق وموقع المنصة': 'Add a new service for the platform app and website.',
+    'أدخل اسم الخدمة (مثال: صيانة أجهزة، استشارات فنية، شحن وتوصيل)...': 'Enter the service name (for example: maintenance, technical consultation, delivery)...',
+    'وصف موجز للخدمة يظهر في القوائم والبطاقات...': 'A short service description shown in lists and cards...',
+    'شرح مفصل عن كيفية تقديم الخدمة والمزايا والتفاصيل الفنية (اختياري)...': 'A detailed explanation of the service, benefits, and technical details (optional)...',
+    'تصنيفات خدماتنا': 'Service categories', 'تصنيفات مستقلة لتنظيم الخدمات المعروضة في المنصة.': 'Independent categories for organizing services shown on the platform.',
+    'التصنيف': 'Category', 'الفرعي': 'Subcategories', 'تعديل تصنيف خدمة': 'Edit service category',
+    'مثال: خدمات الصيانة': 'Example: Maintenance services', 'وصف مختصر للتصنيف': 'Short category description',
+    'التصنيف نشط ويظهر في الاختيارات': 'Category is active and available for selection',
 
     // Advertisements
     'إضافة إعلان': 'Add advertisement', 'بحث بعنوان الإعلان أو الوصف...': 'Search by advertisement title or description...',

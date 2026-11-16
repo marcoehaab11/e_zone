@@ -11,15 +11,15 @@ namespace SupplierDirectory.Controllers;
 [Authorize(Roles = "Admin")]
 public sealed class ProductCategoriesDashboardController(AppDbContext db, IFileStorageService fileStorage) : Controller
 {
-    private async Task<IReadOnlyList<(int Id, string Name)>> GetParentCategories(int? excludeId = null)
+    private async Task<IReadOnlyList<(int Id, string Name, string? NameEn)>> GetParentCategories(int? excludeId = null)
     {
         var query = db.ProductCategories.AsNoTracking().Where(c => c.IsActive && c.ParentCategoryId == null);
         if (excludeId.HasValue)
         {
             query = query.Where(c => c.Id != excludeId.Value);
         }
-        var list = await query.OrderBy(c => c.Name).Select(c => new { c.Id, c.Name }).ToListAsync();
-        return list.Select(c => (c.Id, c.Name)).ToList();
+        var list = await query.OrderBy(c => c.Name).Select(c => new { c.Id, c.Name, c.NameEn }).ToListAsync();
+        return list.Select(c => (c.Id, c.Name, c.NameEn)).ToList();
     }
 
     [HttpGet("dashboard/product-categories")]

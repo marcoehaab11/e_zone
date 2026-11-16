@@ -1,4 +1,5 @@
 @model SupplierDirectory.Application.ProductCategoryFormViewModel
+@inject SupplierDirectory.Infrastructure.Localization.IUiText T
 @{
     var isEdit = Model.Id.HasValue && Model.Id > 0;
     ViewData["Title"] = isEdit ? "تعديل تصنيف المنتج" : "إضافة تصنيف منتج جديد";
@@ -34,7 +35,7 @@
                     <option value="">(مستوى رئيسي - بدون تصنيف أم)</option>
                     @foreach (var p in Model.Parents)
                     {
-                        <option value="@p.Id" selected="@(Model.ParentCategoryId == p.Id)">@p.Name</option>
+                        <option value="@p.Id" selected="@(Model.ParentCategoryId == p.Id)">@(T.IsEnglish ? p.NameEn ?? p.Name : p.Name)</option>
                     }
                 </select>
                 <div class="form-text">اتركه فارغاً إذا كان هذا تصنيفاً رئيسياً، أو اختر التصنيف الرئيسي الذي يندرج تحته.</div>
