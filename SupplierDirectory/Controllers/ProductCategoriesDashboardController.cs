@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SupplierDirectory.Application;
 using SupplierDirectory.Domain;
 using SupplierDirectory.Infrastructure;
+using System.Globalization;
 
 namespace SupplierDirectory.Controllers;
 
@@ -24,6 +25,7 @@ public sealed class ProductCategoriesDashboardController(AppDbContext db, IFileS
     [HttpGet("dashboard/product-categories")]
     public async Task<IActionResult> Index([FromQuery] ProductCategoryListQuery query)
     {
+        var english = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "en";
         var dbQuery = db.ProductCategories.Include(c => c.ParentCategory)
             .Include(c => c.Children)
             .Include(c => c.Products)
@@ -50,11 +52,11 @@ public sealed class ProductCategoriesDashboardController(AppDbContext db, IFileS
             .Select(x => new ProductCategoryListItem
             {
                 Id = x.Id,
-                Name = x.Name,
-                Description = x.Description,
+                Name = english ? (x.NameEn ?? x.Name) : x.Name,
+                Description = english ? (x.DescriptionEn ?? x.Description) : x.Description,
                 ImageUrl = x.ImageUrl,
                 ParentCategoryId = x.ParentCategoryId,
-                ParentName = x.ParentCategory != null ? x.ParentCategory.Name : null,
+                ParentName = x.ParentCategory != null ? (english ? (x.ParentCategory.NameEn ?? x.ParentCategory.Name) : x.ParentCategory.Name) : null,
                 ProductsCount = x.Products.Count,
                 SubCategoriesCount = x.Children.Count,
                 IsActive = x.IsActive,

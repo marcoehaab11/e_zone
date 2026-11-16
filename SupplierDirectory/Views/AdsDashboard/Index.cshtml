@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<SupplierDirectory.Domain.Advertisement>
+@inject SupplierDirectory.Infrastructure.Localization.IUiText T
 @{
     ViewData["Title"] = "إدارة الإعلانات";
     var search = ViewBag.Search as string;
@@ -57,7 +58,7 @@
                                     }
                                 </td>
                                 <td class="fw-bold">
-                                    @item.Title
+                                    @(T.IsEnglish ? item.TitleEn ?? item.Title : item.Title)
                                     @if(!string.IsNullOrEmpty(item.Link)) {
                                         <a href="@item.Link" target="_blank" class="ms-1" title="رابط الإعلان"><i class="fa-solid fa-link text-primary"></i></a>
                                     }

@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<SupplierDirectory.Domain.Product>
+@inject SupplierDirectory.Infrastructure.Localization.IUiText T
 @{ ViewData["Title"] = "المنتجات"; }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -21,8 +22,8 @@
                 <select name="ProductCategoryId" class="form-select rounded-pill px-4">
                     <option value="">كل تصنيفات المنتجات</option>
                     @foreach(var cat in ViewBag.ProductCategories) {
-                        if (ViewBag.ProductCategoryId == cat.Id) { <option value="@cat.Id" selected>@cat.Name</option> }
-                        else { <option value="@cat.Id">@cat.Name</option> }
+                        if (ViewBag.ProductCategoryId == cat.Id) { <option value="@cat.Id" selected>@(T.IsEnglish ? cat.NameEn ?? cat.Name : cat.Name)</option> }
+                        else { <option value="@cat.Id">@(T.IsEnglish ? cat.NameEn ?? cat.Name : cat.Name)</option> }
                     }
                 </select>
             </div>
@@ -30,8 +31,8 @@
                 <select name="AreaId" class="form-select rounded-pill px-4">
                     <option value="">كل المناطق</option>
                     @foreach(var area in ViewBag.Areas) {
-                        if (ViewBag.AreaId == area.Id) { <option value="@area.Id" selected>@area.Name</option> }
-                        else { <option value="@area.Id">@area.Name</option> }
+                        if (ViewBag.AreaId == area.Id) { <option value="@area.Id" selected>@(T.IsEnglish ? area.NameEn ?? area.Name : area.Name)</option> }
+                        else { <option value="@area.Id">@(T.IsEnglish ? area.NameEn ?? area.Name : area.Name)</option> }
                     }
                 </select>
             </div>
@@ -68,17 +69,17 @@
                                     </div>
                                 }
                             </td>
-                            <td><span class="fw-bold text-dark fs-6">@item.Name</span></td>
+                            <td><span class="fw-bold text-dark fs-6">@(T.IsEnglish ? item.NameEn ?? item.Name : item.Name)</span></td>
                             <td>
                                 @if (item.ProductCategory != null) {
                                     <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
-                                        <i class="fa-solid fa-tag me-1"></i>@item.ProductCategory.Name
+                                        <i class="fa-solid fa-tag me-1"></i>@(T.IsEnglish ? item.ProductCategory.NameEn ?? item.ProductCategory.Name : item.ProductCategory.Name)
                                     </span>
                                 } else {
                                     <span class="text-muted small">بدون تصنيف</span>
                                 }
                             </td>
-                            <td><span class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1">@(item.Area?.Name ?? "عام")</span></td>
+                            <td><span class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1">@(item.Area is null ? (T.IsEnglish ? "General" : "عام") : (T.IsEnglish ? item.Area.NameEn ?? item.Area.Name : item.Area.Name))</span></td>
                             <td>
                                 @if (item.IsActive) { <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i> نشط</span> }
                                 else { <span class="badge bg-secondary"><i class="fa-solid fa-xmark me-1"></i> معطل</span> }

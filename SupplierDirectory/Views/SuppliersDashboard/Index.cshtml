@@ -1,4 +1,5 @@
 @model SupplierDirectory.Application.SupplierListViewModel
+@inject SupplierDirectory.Infrastructure.Localization.IUiText T
 @{
     ViewData["Title"] = "إدارة الموردين";
 }
@@ -22,9 +23,9 @@
                     <option value="">كل التصنيفات</option>
                     @foreach(var cat in Model.Categories) {
                         if(Model.Query.CategoryId == cat.Id) {
-                            <option value="@cat.Id" selected>@cat.Name</option>
+                            <option value="@cat.Id" selected>@(T.IsEnglish ? cat.NameEn ?? cat.Name : cat.Name)</option>
                         } else {
-                            <option value="@cat.Id">@cat.Name</option>
+                            <option value="@cat.Id">@(T.IsEnglish ? cat.NameEn ?? cat.Name : cat.Name)</option>
                         }
                     }
                 </select>
@@ -34,9 +35,9 @@
                     <option value="">كل المناطق</option>
                     @foreach(var a in Model.Areas) {
                         if(Model.Query.AreaId == a.Id) {
-                            <option value="@a.Id" selected>@a.Name</option>
+                            <option value="@a.Id" selected>@(T.IsEnglish ? a.NameEn ?? a.Name : a.Name)</option>
                         } else {
-                            <option value="@a.Id">@a.Name</option>
+                            <option value="@a.Id">@(T.IsEnglish ? a.NameEn ?? a.Name : a.Name)</option>
                         }
                     }
                 </select>
@@ -75,11 +76,11 @@
                                         </div>
                                     }
                                 </td>
-                                <td class="fw-bold">@item.Name</td>
+                                <td class="fw-bold">@(T.IsEnglish ? item.NameEn ?? item.Name : item.Name)</td>
                                 <td>
                                     @if(item.SupplierCategories.Any()) {
                                         @foreach(var sc in item.SupplierCategories.Take(2)) {
-                                            <span class="badge bg-info text-dark me-1 mb-1">@sc.Category.Name</span>
+                                            <span class="badge bg-info text-dark me-1 mb-1">@(T.IsEnglish ? sc.Category.NameEn ?? sc.Category.Name : sc.Category.Name)</span>
                                         }
                                         @if(item.SupplierCategories.Count > 2) {
                                             <span class="badge bg-secondary">+@(item.SupplierCategories.Count - 2)</span>

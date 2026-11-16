@@ -1,3 +1,4 @@
+@inject SupplierDirectory.Infrastructure.Localization.IUiText T
 @{
     ViewData["Title"] = "الرئيسية";
     var s = ViewBag.Stats;
@@ -89,7 +90,7 @@
                     @if(recentSuppliers != null && recentSuppliers.Any()) {
                         foreach(var supplier in recentSuppliers) {
                             <tr>
-                                <td class="ps-4 fw-bold">@supplier.Name</td>
+                                <td class="ps-4 fw-bold">@(T.IsEnglish ? supplier.NameEn ?? supplier.Name : supplier.Name)</td>
                                 <td>
                                     @if(supplier.IsActive) {
                                         <span class="badge bg-success">نشط</span>
