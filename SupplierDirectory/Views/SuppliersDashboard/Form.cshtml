@@ -39,11 +39,19 @@
                         <input asp-for="Name" class="form-control" required placeholder="أدخل اسم المورد...">
                         <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
                     </div>
+                    <div class="mb-3" dir="ltr">
+                        <label asp-for="NameEn" class="form-label fw-bold">Supplier name (English)</label>
+                        <input asp-for="NameEn" class="form-control" placeholder="Enter the English supplier name">
+                    </div>
                     
                     <div class="mb-3">
                         <label asp-for="Description" class="form-label fw-bold">الوصف</label>
                         <textarea asp-for="Description" class="form-control" rows="4" placeholder="نبذة عن المورد أو خدماته..."></textarea>
                         <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+                    </div>
+                    <div class="mb-3" dir="ltr">
+                        <label asp-for="DescriptionEn" class="form-label fw-bold">Description (English)</label>
+                        <textarea asp-for="DescriptionEn" class="form-control" rows="4" placeholder="Supplier description in English..."></textarea>
                     </div>
 
                     <div class="mb-3">
@@ -121,10 +129,18 @@
                         <input asp-for="ShortAddress" class="form-control" placeholder="أدخل العنوان المختصر (مثال: المعادي - القاهرة)">
                         <span asp-validation-for="ShortAddress" class="text-danger small mt-1 d-block"></span>
                     </div>
+                    <div class="col-md-6 mb-3" dir="ltr">
+                        <label asp-for="ShortAddressEn" class="form-label fw-bold">Short address (English)</label>
+                        <input asp-for="ShortAddressEn" class="form-control" placeholder="Example: Maadi - Cairo">
+                    </div>
                     <div class="mb-3">
                         <label asp-for="Address" class="form-label fw-bold">العنوان التفصيلي</label>
                         <input asp-for="Address" class="form-control" placeholder="أدخل العنوان المكتوب للفرع الرئيسي">
                         <span asp-validation-for="Address" class="text-danger small mt-1 d-block"></span>
+                    </div>
+                    <div class="col-md-6 mb-3" dir="ltr">
+                        <label asp-for="AddressEn" class="form-label fw-bold">Full address (English)</label>
+                        <input asp-for="AddressEn" class="form-control" placeholder="Enter the full address in English">
                     </div>
                     
                     <div class="row">

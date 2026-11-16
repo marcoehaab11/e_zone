@@ -14,6 +14,7 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
     [HttpGet("suppliers")]
     public async Task<IActionResult> Suppliers([FromQuery] SupplierQuery q)
     {
+        var english = Request.PrefersEnglish();
         var query = db.Suppliers.AsNoTracking().Where(x => x.IsActive && !x.IsDeleted);
         
         if (!string.IsNullOrWhiteSpace(q.Search))
@@ -31,19 +32,19 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
         var items = await query.Skip((q.Page - 1) * q.PageSize).Take(q.PageSize)
             .Select(x => new SupplierListDto(
                 x.Id,
-                x.Name,
-                x.Description,
+                english ? (x.NameEn ?? x.Name) : x.Name,
+                english ? (x.DescriptionEn ?? x.Description) : x.Description,
                 x.LogoUrl,
                 x.PhoneNumber,
                 x.WhatsAppNumber,
-                x.Address,
-                x.ShortAddress,
+                english ? (x.AddressEn ?? x.Address) : x.Address,
+                english ? (x.ShortAddressEn ?? x.ShortAddress) : x.ShortAddress,
                 x.HasTechnicians,
                 x.Latitude,
                 x.Longitude,
                 x.GoogleMapsUrl,
-                x.SupplierCategories.Select(c => c.Category.Name),
-                x.SupplierAreas.Select(a => a.Area.Name)
+                x.SupplierCategories.Select(c => english ? (c.Category.NameEn ?? c.Category.Name) : c.Category.Name),
+                x.SupplierAreas.Select(a => english ? (a.Area.NameEn ?? a.Area.Name) : a.Area.Name)
             )).ToListAsync();
 
         var p = new PageResult<SupplierListDto>(items, q.Page, q.PageSize, total);
@@ -53,27 +54,28 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
     [HttpGet("suppliers/{id:int}")]
     public async Task<IActionResult> Supplier(int id)
     {
+        var english = Request.PrefersEnglish();
         var item = await db.Suppliers.AsNoTracking()
             .Where(x => x.Id == id && x.IsActive && !x.IsDeleted)
             .Select(x => new SupplierDetailsDto(
                 x.Id,
-                x.Name,
-                x.Description,
+                english ? (x.NameEn ?? x.Name) : x.Name,
+                english ? (x.DescriptionEn ?? x.Description) : x.Description,
                 x.LogoUrl,
                 x.PhoneNumber,
                 x.AdditionalPhoneNumbers,
                 x.WhatsAppNumber,
                 x.Email,
                 x.Website,
-                x.Address,
-                x.ShortAddress,
+                english ? (x.AddressEn ?? x.Address) : x.Address,
+                english ? (x.ShortAddressEn ?? x.ShortAddress) : x.ShortAddress,
                 x.HasTechnicians,
                 x.Latitude,
                 x.Longitude,
                 x.GoogleMapsUrl,
                 x.Images.OrderBy(i => i.DisplayOrder).Select(i => new { i.Id, i.ImageUrl, i.DisplayOrder }),
-                x.SupplierCategories.Select(c => new { c.CategoryId, c.Category.Name }),
-                x.SupplierAreas.Select(a => new { a.AreaId, a.Area.Name })
+                x.SupplierCategories.Select(c => new { c.CategoryId, Name = english ? (c.Category.NameEn ?? c.Category.Name) : c.Category.Name }),
+                x.SupplierAreas.Select(a => new { a.AreaId, Name = english ? (a.Area.NameEn ?? a.Area.Name) : a.Area.Name })
             )).FirstOrDefaultAsync();
 
         return item is null ? NotFound(new ApiResponse<object>(false, "المورد غير موجود", null)) : Ok(new ApiResponse<object>(true, "تم الاسترجاع", item));
@@ -82,6 +84,7 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
     [HttpGet("areas")]
     public Task<IActionResult> Areas([FromQuery] PageQuery q, [FromQuery] int? parentId)
     {
+        var english = Request.PrefersEnglish();
         var query = db.Areas.AsNoTracking().Where(x => x.IsActive && !x.IsDeleted);
         if (parentId.HasValue)
         {
@@ -92,13 +95,14 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
         {
             query = query.Where(x => x.Name.Contains(q.Search) || (x.Description != null && x.Description.Contains(q.Search)));
         }
-        return Page(query.OrderBy(x => x.ParentAreaId).ThenBy(x => x.Name).Select(x => new AreaDto(x.Id, x.Name, x.Description, x.ParentAreaId, x.ParentArea != null ? x.ParentArea.Name : null)), q);
+        return Page(query.OrderBy(x => x.ParentAreaId).ThenBy(x => x.Name).Select(x => new AreaDto(x.Id, english ? (x.NameEn ?? x.Name) : x.Name, english ? (x.DescriptionEn ?? x.Description) : x.Description, x.ParentAreaId, x.ParentArea != null ? (english ? (x.ParentArea.NameEn ?? x.ParentArea.Name) : x.ParentArea.Name) : null)), q);
     }
 
     [HttpGet("categories")]
     [HttpGet("supplier-categories")]
     public Task<IActionResult> Categories([FromQuery] PageQuery q, [FromQuery] int? parentId)
     {
+        var english = Request.PrefersEnglish();
         var query = db.Categories.AsNoTracking().Where(x => x.IsActive && !x.IsDeleted);
         if (parentId.HasValue)
         {
@@ -109,26 +113,27 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
         {
             query = query.Where(x => x.Name.Contains(q.Search) || (x.Description != null && x.Description.Contains(q.Search)));
         }
-        return Page(query.OrderBy(x => x.ParentCategoryId).ThenBy(x => x.Name).Select(x => new CategoryDto(x.Id, x.Name, x.Description, x.ImageUrl, x.ParentCategoryId, x.ParentCategory != null ? x.ParentCategory.Name : null, x.Children.Count(c => !c.IsDeleted && c.IsActive))), q);
+        return Page(query.OrderBy(x => x.ParentCategoryId).ThenBy(x => x.Name).Select(x => new CategoryDto(x.Id, english ? (x.NameEn ?? x.Name) : x.Name, english ? (x.DescriptionEn ?? x.Description) : x.Description, x.ImageUrl, x.ParentCategoryId, x.ParentCategory != null ? (english ? (x.ParentCategory.NameEn ?? x.ParentCategory.Name) : x.ParentCategory.Name) : null, x.Children.Count(c => !c.IsDeleted && c.IsActive))), q);
     }
 
     [HttpGet("categories/{id:int}")]
     [HttpGet("supplier-categories/{id:int}")]
     public async Task<IActionResult> Category(int id)
     {
+        var english = Request.PrefersEnglish();
         var cat = await db.Categories.AsNoTracking()
             .Where(x => x.Id == id && x.IsActive && !x.IsDeleted)
             .Select(x => new {
                 x.Id,
-                x.Name,
-                x.Description,
+                Name = english ? (x.NameEn ?? x.Name) : x.Name,
+                Description = english ? (x.DescriptionEn ?? x.Description) : x.Description,
                 x.ImageUrl,
                 x.ParentCategoryId,
-                ParentCategoryName = x.ParentCategory != null ? x.ParentCategory.Name : null,
+                ParentCategoryName = x.ParentCategory != null ? (english ? (x.ParentCategory.NameEn ?? x.ParentCategory.Name) : x.ParentCategory.Name) : null,
                 Children = x.Children.Where(c => !c.IsDeleted && c.IsActive).Select(c => new {
                     c.Id,
-                    c.Name,
-                    c.Description,
+                    Name = english ? (c.NameEn ?? c.Name) : c.Name,
+                    Description = english ? (c.DescriptionEn ?? c.Description) : c.Description,
                     c.ImageUrl
                 })
             }).FirstOrDefaultAsync();
@@ -140,6 +145,7 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
     [HttpGet("product-categories")]
     public Task<IActionResult> ProductCategories([FromQuery] PageQuery q, [FromQuery] int? parentId)
     {
+        var english = Request.PrefersEnglish();
         var query = db.ProductCategories.AsNoTracking().Where(x => x.IsActive && !x.IsDeleted);
         if (parentId.HasValue)
         {
@@ -150,25 +156,26 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
         {
             query = query.Where(x => x.Name.Contains(q.Search) || (x.Description != null && x.Description.Contains(q.Search)));
         }
-        return Page(query.OrderBy(x => x.ParentCategoryId).ThenBy(x => x.Name).Select(x => new ProductCategoryDto(x.Id, x.Name, x.Description, x.ImageUrl, x.ParentCategoryId, x.ParentCategory != null ? x.ParentCategory.Name : null, x.Children.Count(c => !c.IsDeleted && c.IsActive))), q);
+        return Page(query.OrderBy(x => x.ParentCategoryId).ThenBy(x => x.Name).Select(x => new ProductCategoryDto(x.Id, english ? (x.NameEn ?? x.Name) : x.Name, english ? (x.DescriptionEn ?? x.Description) : x.Description, x.ImageUrl, x.ParentCategoryId, x.ParentCategory != null ? (english ? (x.ParentCategory.NameEn ?? x.ParentCategory.Name) : x.ParentCategory.Name) : null, x.Children.Count(c => !c.IsDeleted && c.IsActive))), q);
     }
 
     [HttpGet("product-categories/{id:int}")]
     public async Task<IActionResult> ProductCategory(int id)
     {
+        var english = Request.PrefersEnglish();
         var cat = await db.ProductCategories.AsNoTracking()
             .Where(x => x.Id == id && x.IsActive && !x.IsDeleted)
             .Select(x => new {
                 x.Id,
-                x.Name,
-                x.Description,
+                Name = english ? (x.NameEn ?? x.Name) : x.Name,
+                Description = english ? (x.DescriptionEn ?? x.Description) : x.Description,
                 x.ImageUrl,
                 x.ParentCategoryId,
-                ParentCategoryName = x.ParentCategory != null ? x.ParentCategory.Name : null,
+                ParentCategoryName = x.ParentCategory != null ? (english ? (x.ParentCategory.NameEn ?? x.ParentCategory.Name) : x.ParentCategory.Name) : null,
                 Children = x.Children.Where(c => !c.IsDeleted && c.IsActive).Select(c => new {
                     c.Id,
-                    c.Name,
-                    c.Description,
+                    Name = english ? (c.NameEn ?? c.Name) : c.Name,
+                    Description = english ? (c.DescriptionEn ?? c.Description) : c.Description,
                     c.ImageUrl
                 })
             }).FirstOrDefaultAsync();
@@ -180,6 +187,7 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
     [HttpGet("advertisements")]
     public async Task<IActionResult> Ads([FromQuery] int? areaId)
     {
+        var english = Request.PrefersEnglish();
         var now = DateTime.UtcNow;
         var query = db.Advertisements.AsNoTracking()
             .Where(a => a.IsActive && !a.IsDeleted && 
@@ -198,13 +206,13 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
         var results = await query.OrderBy(a => a.DisplayOrder)
             .Select(a => new {
                 a.Id,
-                a.Title,
-                a.Description,
+                Title = english ? (a.TitleEn ?? a.Title) : a.Title,
+                Description = english ? (a.DescriptionEn ?? a.Description) : a.Description,
                 a.ImageUrl,
                 a.Link,
                 a.DisplayOrder,
                 a.AreaId,
-                AreaName = a.Area != null ? a.Area.Name : null
+                AreaName = a.Area != null ? (english ? (a.Area.NameEn ?? a.Area.Name) : a.Area.Name) : null
             }).ToListAsync();
             
         return Ok(new ApiResponse<object>(true, "تم الاسترجاع", results));
@@ -213,17 +221,18 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
     [HttpGet("company")]
     public async Task<IActionResult> Company()
     {
+        var english = Request.PrefersEnglish();
         var info = await db.CompanyInfos.AsNoTracking()
             .Select(c => new {
                 c.Id,
-                c.CompanyName,
+                CompanyName = english ? (c.CompanyNameEn ?? c.CompanyName) : c.CompanyName,
                 c.LogoUrl,
                 c.CoverImageUrl,
-                c.About,
-                c.Mission,
-                c.Vision,
-                c.PlatformDescription,
-                c.PlatformServices,
+                About = english ? (c.AboutEn ?? c.About) : c.About,
+                Mission = english ? (c.MissionEn ?? c.Mission) : c.Mission,
+                Vision = english ? (c.VisionEn ?? c.Vision) : c.Vision,
+                PlatformDescription = english ? (c.PlatformDescriptionEn ?? c.PlatformDescription) : c.PlatformDescription,
+                PlatformServices = english ? (c.PlatformServicesEn ?? c.PlatformServices) : c.PlatformServices,
                 c.ContactPhone,
                 c.WhatsApp,
                 c.Email,
@@ -241,6 +250,7 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
     [HttpGet("products")]
     public async Task<IActionResult> Products([FromQuery] PageQuery q, [FromQuery] int? areaId, [FromQuery] int? productCategoryId, [FromQuery] int? categoryId)
     {
+        var english = Request.PrefersEnglish();
         var query = db.Products.AsNoTracking().Where(x => x.IsActive && !x.IsDeleted);
         
         if (!string.IsNullOrWhiteSpace(q.Search))
@@ -259,13 +269,13 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
             .Take(q.PageSize)
             .Select(x => new ProductDto(
                 x.Id,
-                x.Name,
-                x.Description,
-                x.Details,
+                english ? (x.NameEn ?? x.Name) : x.Name,
+                english ? (x.DescriptionEn ?? x.Description) : x.Description,
+                english ? (x.DetailsEn ?? x.Details) : x.Details,
                 x.AreaId, 
-                x.Area != null ? x.Area.Name : null, 
+                x.Area != null ? (english ? (x.Area.NameEn ?? x.Area.Name) : x.Area.Name) : null, 
                 x.ProductCategoryId,
-                x.ProductCategory != null ? x.ProductCategory.Name : null,
+                x.ProductCategory != null ? (english ? (x.ProductCategory.NameEn ?? x.ProductCategory.Name) : x.ProductCategory.Name) : null,
                 x.Images.OrderBy(i => i.DisplayOrder).Select(i => new { i.Id, i.ImageUrl, i.DisplayOrder })
             )).ToListAsync();
 
@@ -276,16 +286,17 @@ public sealed class PublicController(AppDbContext db) : ControllerBase
     [HttpGet("products/{id:int}")]
     public async Task<IActionResult> Product(int id)
     {
+        var english = Request.PrefersEnglish();
         var item = await db.Products.AsNoTracking().Where(x => x.Id == id && x.IsActive && !x.IsDeleted)
             .Select(x => new ProductDto(
                 x.Id,
-                x.Name,
-                x.Description,
-                x.Details,
+                english ? (x.NameEn ?? x.Name) : x.Name,
+                english ? (x.DescriptionEn ?? x.Description) : x.Description,
+                english ? (x.DetailsEn ?? x.Details) : x.Details,
                 x.AreaId, 
-                x.Area != null ? x.Area.Name : null, 
+                x.Area != null ? (english ? (x.Area.NameEn ?? x.Area.Name) : x.Area.Name) : null, 
                 x.ProductCategoryId,
-                x.ProductCategory != null ? x.ProductCategory.Name : null,
+                x.ProductCategory != null ? (english ? (x.ProductCategory.NameEn ?? x.ProductCategory.Name) : x.ProductCategory.Name) : null,
                 x.Images.OrderBy(i => i.DisplayOrder).Select(i => new { i.Id, i.ImageUrl, i.DisplayOrder })
             )).FirstOrDefaultAsync();
 

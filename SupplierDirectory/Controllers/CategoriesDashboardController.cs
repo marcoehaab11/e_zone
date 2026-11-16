@@ -106,7 +106,9 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
         var category = new Category
         {
             Name = model.Name.Trim(),
+            NameEn = model.NameEn?.Trim(),
             Description = model.Description?.Trim(),
+            DescriptionEn = model.DescriptionEn?.Trim(),
             ParentCategoryId = model.ParentCategoryId,
             ImageUrl = imageUrl,
             IsActive = model.IsActive
@@ -129,7 +131,9 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
         {
             Id = cat.Id,
             Name = cat.Name,
+            NameEn = cat.NameEn,
             Description = cat.Description,
+            DescriptionEn = cat.DescriptionEn,
             ParentCategoryId = cat.ParentCategoryId,
             ExistingImageUrl = cat.ImageUrl,
             IsActive = cat.IsActive,
@@ -174,7 +178,9 @@ public sealed class CategoriesDashboardController(AppDbContext db, IFileStorageS
         }
 
         cat.Name = model.Name.Trim();
+        cat.NameEn = model.NameEn?.Trim();
         cat.Description = model.Description?.Trim();
+        cat.DescriptionEn = model.DescriptionEn?.Trim();
         cat.ParentCategoryId = model.ParentCategoryId;
         cat.IsActive = model.IsActive;
         cat.UpdatedAt = DateTime.UtcNow;

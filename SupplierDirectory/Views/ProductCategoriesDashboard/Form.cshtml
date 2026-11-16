@@ -23,6 +23,10 @@
                 <input asp-for="Name" class="form-control" placeholder="أدخل اسم التصنيف (مثال: هواتف ذكية، أدوات كهربائية، قطع غيار)...">
                 <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
             </div>
+            <div class="mb-3" dir="ltr">
+                <label asp-for="NameEn" class="form-label fw-bold">Product category name (English)</label>
+                <input asp-for="NameEn" class="form-control" placeholder="Enter English product category name">
+            </div>
 
             <div class="mb-3">
                 <label asp-for="ParentCategoryId" class="form-label fw-bold">التصنيف الرئيسي (الأب)</label>
@@ -35,6 +39,10 @@
                 </select>
                 <div class="form-text">اتركه فارغاً إذا كان هذا تصنيفاً رئيسياً، أو اختر التصنيف الرئيسي الذي يندرج تحته.</div>
                 <span asp-validation-for="ParentCategoryId" class="text-danger small mt-1 d-block"></span>
+            </div>
+            <div class="mb-3" dir="ltr">
+                <label asp-for="DescriptionEn" class="form-label fw-bold">Description (English)</label>
+                <textarea asp-for="DescriptionEn" class="form-control" rows="3"></textarea>
             </div>
 
             <div class="mb-3">

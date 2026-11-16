@@ -96,14 +96,18 @@ public sealed class SuppliersDashboardController(AppDbContext db, IFileStorageSe
         var supplier = new Supplier
         {
             Name = model.Name.Trim(),
+            NameEn = model.NameEn?.Trim(),
             Description = model.Description?.Trim(),
+            DescriptionEn = model.DescriptionEn?.Trim(),
             PhoneNumber = model.PhoneNumber?.Trim(),
             AdditionalPhoneNumbers = model.AdditionalPhoneNumbers?.Trim(),
             WhatsAppNumber = model.WhatsAppNumber?.Trim(),
             Email = model.Email?.Trim(),
             Website = model.Website?.Trim(),
             Address = model.Address?.Trim(),
+            AddressEn = model.AddressEn?.Trim(),
             ShortAddress = model.ShortAddress?.Trim(),
+            ShortAddressEn = model.ShortAddressEn?.Trim(),
             HasTechnicians = model.HasTechnicians,
             Latitude = model.Latitude,
             Longitude = model.Longitude,
@@ -164,14 +168,16 @@ public sealed class SuppliersDashboardController(AppDbContext db, IFileStorageSe
         {
             Id = supplier.Id,
             Name = supplier.Name,
+            NameEn = supplier.NameEn,
             Description = supplier.Description,
+            DescriptionEn = supplier.DescriptionEn,
             ExistingLogoUrl = supplier.LogoUrl,
             PhoneNumber = supplier.PhoneNumber,
             AdditionalPhoneNumbers = supplier.AdditionalPhoneNumbers,
             WhatsAppNumber = supplier.WhatsAppNumber,
             Email = supplier.Email,
             Website = supplier.Website,
-            Address = supplier.Address, ShortAddress = supplier.ShortAddress, HasTechnicians = supplier.HasTechnicians,
+            Address = supplier.Address, AddressEn = supplier.AddressEn, ShortAddress = supplier.ShortAddress, ShortAddressEn = supplier.ShortAddressEn, HasTechnicians = supplier.HasTechnicians,
             Latitude = supplier.Latitude,
             Longitude = supplier.Longitude,
             GoogleMapsUrl = supplier.GoogleMapsUrl,
@@ -224,14 +230,18 @@ public sealed class SuppliersDashboardController(AppDbContext db, IFileStorageSe
         }
 
         supplier.Name = model.Name.Trim();
+        supplier.NameEn = model.NameEn?.Trim();
         supplier.Description = model.Description?.Trim();
+        supplier.DescriptionEn = model.DescriptionEn?.Trim();
         supplier.PhoneNumber = model.PhoneNumber?.Trim();
         supplier.AdditionalPhoneNumbers = model.AdditionalPhoneNumbers?.Trim();
         supplier.WhatsAppNumber = model.WhatsAppNumber?.Trim();
         supplier.Email = model.Email?.Trim();
         supplier.Website = model.Website?.Trim();
         supplier.Address = model.Address?.Trim();
+        supplier.AddressEn = model.AddressEn?.Trim();
         supplier.ShortAddress = model.ShortAddress?.Trim();
+        supplier.ShortAddressEn = model.ShortAddressEn?.Trim();
         supplier.HasTechnicians = model.HasTechnicians;
         supplier.Latitude = model.Latitude;
         supplier.Longitude = model.Longitude;

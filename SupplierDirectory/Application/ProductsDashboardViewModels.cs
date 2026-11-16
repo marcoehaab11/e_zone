@@ -21,12 +21,15 @@ public class ProductFormViewModel
     [Required(ErrorMessage = "اسم المنتج مطلوب")]
     [StringLength(200, MinimumLength = 2, ErrorMessage = "اسم المنتج يجب أن يكون بين 2 و 200 حرف")]
     public string Name { get; set; } = string.Empty;
+    [StringLength(200)] public string? NameEn { get; set; }
     
     [StringLength(1000, ErrorMessage = "الوصف يجب ألا يتجاوز 1000 حرف")]
     public string? Description { get; set; }
+    [StringLength(1000)] public string? DescriptionEn { get; set; }
 
     [StringLength(2000, ErrorMessage = "المعلومات يجب ألا تتجاوز 2000 حرف")]
     public string? Details { get; set; }
+    [StringLength(2000)] public string? DetailsEn { get; set; }
     
     public int? AreaId { get; set; }
     public int? ProductCategoryId { get; set; }

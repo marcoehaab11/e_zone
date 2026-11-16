@@ -32,9 +32,11 @@ public class SupplierFormViewModel
     [Required(ErrorMessage = "اسم المورد مطلوب")]
     [StringLength(200, MinimumLength = 3, ErrorMessage = "اسم المورد يجب أن يكون بين 3 و 200 حرف")]
     public string Name { get; set; } = string.Empty;
+    [StringLength(200)] public string? NameEn { get; set; }
     
     [StringLength(1000, ErrorMessage = "الوصف يجب ألا يتجاوز 1000 حرف")]
     public string? Description { get; set; }
+    [StringLength(1000)] public string? DescriptionEn { get; set; }
     
     [MaxFileSize(5 * 1024 * 1024)]
     [AllowedExtensions(new[] { ".jpg", ".png", ".jpeg", ".webp" })]
@@ -63,9 +65,11 @@ public class SupplierFormViewModel
     
     [StringLength(300, ErrorMessage = "العنوان يجب ألا يتجاوز 300 حرف")]
     public string? Address { get; set; }
+    [StringLength(300)] public string? AddressEn { get; set; }
     
     [StringLength(100, ErrorMessage = "العنوان المختصر يجب ألا يتجاوز 100 حرف")]
     public string? ShortAddress { get; set; }
+    [StringLength(100)] public string? ShortAddressEn { get; set; }
     
     public bool HasTechnicians { get; set; }
     

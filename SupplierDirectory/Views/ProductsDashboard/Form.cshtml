@@ -20,6 +20,10 @@
                     <input asp-for="Name" class="form-control" placeholder="أدخل اسم المنتج..." />
                     <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
                 </div>
+                <div class="col-md-4 mb-3" dir="ltr">
+                    <label asp-for="NameEn" class="form-label fw-bold">Product name (English)</label>
+                    <input asp-for="NameEn" class="form-control" placeholder="Enter English product name" />
+                </div>
                 <div class="col-md-4 mb-3">
                     <label asp-for="ProductCategoryId" class="form-label fw-bold">تصنيف المنتج</label>
                     <select asp-for="ProductCategoryId" class="form-select">
@@ -46,10 +50,18 @@
                 <textarea asp-for="Description" class="form-control" rows="2" placeholder="وصف موجز للمنتج..."></textarea>
                 <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
             </div>
+            <div class="mb-3" dir="ltr">
+                <label asp-for="DescriptionEn" class="form-label fw-bold">Short description (English)</label>
+                <textarea asp-for="DescriptionEn" class="form-control" rows="2"></textarea>
+            </div>
             <div class="mb-3">
                 <label asp-for="Details" class="form-label fw-bold">تفاصيل ومعلومات إضافية</label>
                 <textarea asp-for="Details" class="form-control" rows="4" placeholder="المواصفات الفنية أو التفاصيل الكاملة..."></textarea>
                 <span asp-validation-for="Details" class="text-danger small mt-1 d-block"></span>
+            </div>
+            <div class="mb-3" dir="ltr">
+                <label asp-for="DetailsEn" class="form-label fw-bold">Details (English)</label>
+                <textarea asp-for="DetailsEn" class="form-control" rows="4"></textarea>
             </div>
             <div class="form-check form-switch mt-3">
                 <input asp-for="IsActive" class="form-check-input border-primary" type="checkbox" role="switch">

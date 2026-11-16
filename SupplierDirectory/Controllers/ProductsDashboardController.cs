@@ -75,8 +75,11 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
         var product = new Product
         {
             Name = model.Name.Trim(),
+            NameEn = model.NameEn?.Trim(),
             Description = model.Description?.Trim(),
+            DescriptionEn = model.DescriptionEn?.Trim(),
             Details = model.Details?.Trim(),
+            DetailsEn = model.DetailsEn?.Trim(),
             AreaId = model.AreaId,
             ProductCategoryId = model.ProductCategoryId,
             IsActive = model.IsActive
@@ -111,8 +114,11 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
         {
             Id = product.Id,
             Name = product.Name,
+            NameEn = product.NameEn,
             Description = product.Description,
+            DescriptionEn = product.DescriptionEn,
             Details = product.Details,
+            DetailsEn = product.DetailsEn,
             AreaId = product.AreaId,
             ProductCategoryId = product.ProductCategoryId,
             IsActive = product.IsActive,
@@ -142,8 +148,11 @@ public sealed class ProductsDashboardController(AppDbContext db, IFileStorageSer
         if (product == null) return NotFound();
 
         product.Name = model.Name.Trim();
+        product.NameEn = model.NameEn?.Trim();
         product.Description = model.Description?.Trim();
+        product.DescriptionEn = model.DescriptionEn?.Trim();
         product.Details = model.Details?.Trim();
+        product.DetailsEn = model.DetailsEn?.Trim();
         product.AreaId = model.AreaId;
         product.ProductCategoryId = model.ProductCategoryId;
         product.IsActive = model.IsActive;

@@ -19,7 +19,9 @@ public sealed class CategoryListItem
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
+    [StringLength(150)] public string? NameEn { get; set; }
     public string? Description { get; set; }
+    [StringLength(1000)] public string? DescriptionEn { get; set; }
     public string? ImageUrl { get; set; }
     public int? ParentCategoryId { get; set; }
     public string? ParentName { get; set; }
@@ -45,9 +47,11 @@ public sealed class CategoryFormViewModel
     [Required(ErrorMessage = "اسم التصنيف مطلوب")]
     [StringLength(150, ErrorMessage = "اسم التصنيف يجب ألا يتجاوز 150 حرف")]
     public string Name { get; set; } = string.Empty;
+    [StringLength(150)] public string? NameEn { get; set; }
 
     [StringLength(1000, ErrorMessage = "الوصف يجب ألا يتجاوز 1000 حرف")]
     public string? Description { get; set; }
+    [StringLength(1000)] public string? DescriptionEn { get; set; }
 
     public int? ParentCategoryId { get; set; }
 
@@ -103,9 +107,11 @@ public sealed class ProductCategoryFormViewModel
     [Required(ErrorMessage = "اسم تصنيف المنتج مطلوب")]
     [StringLength(150, ErrorMessage = "اسم التصنيف يجب ألا يتجاوز 150 حرف")]
     public string Name { get; set; } = string.Empty;
+    [StringLength(150)] public string? NameEn { get; set; }
 
     [StringLength(1000, ErrorMessage = "الوصف يجب ألا يتجاوز 1000 حرف")]
     public string? Description { get; set; }
+    [StringLength(1000)] public string? DescriptionEn { get; set; }
 
     public int? ParentCategoryId { get; set; }
 

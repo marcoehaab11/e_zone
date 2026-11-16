@@ -20,11 +20,19 @@
                 <input asp-for="Name" class="form-control" placeholder="أدخل اسم المنطقة...">
                 <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
             </div>
+            <div class="mb-3" dir="ltr">
+                <label asp-for="NameEn" class="form-label fw-bold">Area name (English)</label>
+                <input asp-for="NameEn" class="form-control" placeholder="Enter English area name">
+            </div>
             
             <div class="mb-3">
                 <label asp-for="Description" class="form-label fw-bold">الوصف</label>
                 <textarea asp-for="Description" class="form-control" rows="3" placeholder="وصف إضافي للمنطقة (اختياري)"></textarea>
                 <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+            </div>
+            <div class="mb-3" dir="ltr">
+                <label asp-for="DescriptionEn" class="form-label fw-bold">Description (English)</label>
+                <textarea asp-for="DescriptionEn" class="form-control" rows="3"></textarea>
             </div>
             
             <div class="mb-4">
