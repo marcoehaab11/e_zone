@@ -34,24 +34,28 @@
                     <h5 class="mb-0 fw-bold text-primary">البيانات الأساسية</h5>
                 </div>
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label fw-bold">اسم المورد <span class="text-danger">*</span></label>
-                        <input asp-for="Name" class="form-control" required placeholder="أدخل اسم المورد...">
-                        <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                    <div class="row g-3 language-pair">
+                        <div class="col-md-6 language-field language-field--ar">
+                            <label asp-for="Name" class="form-label fw-bold">اسم المورد <span class="text-danger">*</span></label>
+                            <input asp-for="Name" class="form-control" required placeholder="أدخل اسم المورد...">
+                            <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                        <div class="col-md-6 language-field language-field--en" dir="ltr">
+                            <label asp-for="NameEn" class="form-label fw-bold">Supplier name</label>
+                            <input asp-for="NameEn" class="form-control" placeholder="Enter the English supplier name">
+                        </div>
                     </div>
-                    <div class="mb-3" dir="ltr">
-                        <label asp-for="NameEn" class="form-label fw-bold">Supplier name (English)</label>
-                        <input asp-for="NameEn" class="form-control" placeholder="Enter the English supplier name">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label fw-bold">الوصف</label>
-                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="نبذة عن المورد أو خدماته..."></textarea>
-                        <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
-                    </div>
-                    <div class="mb-3" dir="ltr">
-                        <label asp-for="DescriptionEn" class="form-label fw-bold">Description (English)</label>
-                        <textarea asp-for="DescriptionEn" class="form-control" rows="4" placeholder="Supplier description in English..."></textarea>
+
+                    <div class="row g-3 language-pair mt-1">
+                        <div class="col-md-6 language-field language-field--ar">
+                            <label asp-for="Description" class="form-label fw-bold">الوصف</label>
+                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="نبذة عن المورد أو خدماته..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                        <div class="col-md-6 language-field language-field--en" dir="ltr">
+                            <label asp-for="DescriptionEn" class="form-label fw-bold">Description</label>
+                            <textarea asp-for="DescriptionEn" class="form-control" rows="4" placeholder="Supplier description in English..."></textarea>
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -124,23 +128,27 @@
                     <h5 class="mb-0 fw-bold text-primary">الموقع الجغرافي (الفرع الأساسي)</h5>
                 </div>
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <label asp-for="ShortAddress" class="form-label fw-bold">العنوان المختصر (يظهر في القوائم)</label>
-                        <input asp-for="ShortAddress" class="form-control" placeholder="أدخل العنوان المختصر (مثال: المعادي - القاهرة)">
-                        <span asp-validation-for="ShortAddress" class="text-danger small mt-1 d-block"></span>
+                    <div class="row g-3 language-pair">
+                        <div class="col-md-6 language-field language-field--ar">
+                            <label asp-for="ShortAddress" class="form-label fw-bold">العنوان المختصر <span class="text-muted fw-normal">(يظهر في القوائم)</span></label>
+                            <input asp-for="ShortAddress" class="form-control" placeholder="مثال: المعادي - القاهرة">
+                            <span asp-validation-for="ShortAddress" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                        <div class="col-md-6 language-field language-field--en" dir="ltr">
+                            <label asp-for="ShortAddressEn" class="form-label fw-bold">Short address <span class="text-muted fw-normal">(shown in lists)</span></label>
+                            <input asp-for="ShortAddressEn" class="form-control" placeholder="Example: Maadi - Cairo">
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3" dir="ltr">
-                        <label asp-for="ShortAddressEn" class="form-label fw-bold">Short address (English)</label>
-                        <input asp-for="ShortAddressEn" class="form-control" placeholder="Example: Maadi - Cairo">
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Address" class="form-label fw-bold">العنوان التفصيلي</label>
-                        <input asp-for="Address" class="form-control" placeholder="أدخل العنوان المكتوب للفرع الرئيسي">
-                        <span asp-validation-for="Address" class="text-danger small mt-1 d-block"></span>
-                    </div>
-                    <div class="col-md-6 mb-3" dir="ltr">
-                        <label asp-for="AddressEn" class="form-label fw-bold">Full address (English)</label>
-                        <input asp-for="AddressEn" class="form-control" placeholder="Enter the full address in English">
+                    <div class="row g-3 language-pair mt-1">
+                        <div class="col-md-6 language-field language-field--ar">
+                            <label asp-for="Address" class="form-label fw-bold">العنوان التفصيلي</label>
+                            <input asp-for="Address" class="form-control" placeholder="أدخل عنوان الفرع الرئيسي بالتفصيل">
+                            <span asp-validation-for="Address" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                        <div class="col-md-6 language-field language-field--en" dir="ltr">
+                            <label asp-for="AddressEn" class="form-label fw-bold">Full address</label>
+                            <input asp-for="AddressEn" class="form-control" placeholder="Enter the full address in English">
+                        </div>
                     </div>
                     
                     <div class="row">

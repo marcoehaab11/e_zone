@@ -6,6 +6,69 @@ body {
     color: #333;
 }
 
+/* Bilingual data entry: the paired fields remain comparable and unmistakable. */
+.language-pair {
+    --language-border: #dbe4f0;
+    margin-bottom: 1rem;
+}
+
+.language-field {
+    position: relative;
+}
+
+.language-field::before {
+    display: inline-flex;
+    align-items: center;
+    height: 1.35rem;
+    margin-bottom: .45rem;
+    padding: 0 .55rem;
+    border-radius: .375rem;
+    font-family: 'Cairo', sans-serif;
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.language-field--ar::before {
+    content: 'العربية';
+    color: #075985;
+    background: #e0f2fe;
+}
+
+.language-field--en::before {
+    content: 'ENGLISH';
+    color: #4338ca;
+    background: #eef2ff;
+    font-family: Arial, sans-serif;
+    letter-spacing: .06em;
+}
+
+.language-field .form-label {
+    display: block;
+    margin-bottom: .45rem;
+}
+
+.language-field .form-control {
+    min-height: 2.75rem;
+    border-color: var(--language-border);
+}
+
+.language-field--ar .form-control:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 .2rem rgba(14, 165, 233, .14);
+}
+
+.language-field--en .form-control:focus {
+    border-color: #818cf8;
+    box-shadow: 0 0 0 .2rem rgba(99, 102, 241, .14);
+}
+
+@media (max-width: 767px) {
+    .language-pair {
+        margin-bottom: .75rem;
+    }
+}
+
 /* Sidebar Wrapper */
 #wrapper {
     overflow-x: hidden;
