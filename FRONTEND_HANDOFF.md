@@ -2,9 +2,9 @@
 
 ## URLs
 
-- Website: `http://ezone.runasp.net/`
-- Public API base URL: `http://ezone.runasp.net/api`
-- Admin login: `http://ezone.runasp.net/login`
+- Website: `https://ezone.runasp.net/`
+- Public API base URL: `https://ezone.runasp.net/api`
+- Admin login: `https://ezone.runasp.net/login`
 
 ## Scope for the frontend
 
@@ -73,7 +73,7 @@ Successful responses use this structure:
 | Service details | `GET /services/{id}` | — |
 | Service listing | `GET /services` | `page`, `pageSize`, `search`, `categoryId` |
 
-All endpoint paths above are relative to the API base URL. Example: `GET http://ezone.runasp.net/api/services?page=1&pageSize=20`.
+All endpoint paths above are relative to the API base URL. Example: `GET https://ezone.runasp.net/api/services?page=1&pageSize=20`.
 
 ## Main content fields
 
