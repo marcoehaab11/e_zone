@@ -63,8 +63,11 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
         var service = new Service
         {
             Name = model.Name.Trim(),
+            NameEn = model.NameEn?.Trim(),
             Description = model.Description?.Trim(),
+            DescriptionEn = model.DescriptionEn?.Trim(),
             Details = model.Details?.Trim(),
+            DetailsEn = model.DetailsEn?.Trim(),
             DisplayOrder = model.DisplayOrder,
             ServiceCategoryId = model.ServiceCategoryId,
             IsActive = model.IsActive
@@ -99,8 +102,11 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
         {
             Id = service.Id,
             Name = service.Name,
+            NameEn = service.NameEn,
             Description = service.Description,
+            DescriptionEn = service.DescriptionEn,
             Details = service.Details,
+            DetailsEn = service.DetailsEn,
             DisplayOrder = service.DisplayOrder,
             ServiceCategoryId = service.ServiceCategoryId,
             IsActive = service.IsActive,
@@ -130,8 +136,11 @@ public sealed class ServicesDashboardController(AppDbContext db, IFileStorageSer
         if (service == null) return NotFound();
 
         service.Name = model.Name.Trim();
+        service.NameEn = model.NameEn?.Trim();
         service.Description = model.Description?.Trim();
+        service.DescriptionEn = model.DescriptionEn?.Trim();
         service.Details = model.Details?.Trim();
+        service.DetailsEn = model.DetailsEn?.Trim();
         service.DisplayOrder = model.DisplayOrder;
         service.ServiceCategoryId = model.ServiceCategoryId;
         service.IsActive = model.IsActive;

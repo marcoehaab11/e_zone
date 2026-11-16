@@ -20,12 +20,15 @@ public class ServiceFormViewModel
     [Required(ErrorMessage = "اسم الخدمة مطلوب")]
     [StringLength(200, MinimumLength = 2, ErrorMessage = "اسم الخدمة يجب أن يكون بين 2 و 200 حرف")]
     public string Name { get; set; } = string.Empty;
+    [StringLength(200)] public string? NameEn { get; set; }
     
     [StringLength(1000, ErrorMessage = "الوصف يجب ألا يتجاوز 1000 حرف")]
     public string? Description { get; set; }
+    [StringLength(1000)] public string? DescriptionEn { get; set; }
 
     [StringLength(3000, ErrorMessage = "التفاصيل يجب ألا تتجاوز 3000 حرف")]
     public string? Details { get; set; }
+    [StringLength(3000)] public string? DetailsEn { get; set; }
     
     public int DisplayOrder { get; set; }
     [Display(Name = "تصنيف الخدمة")]

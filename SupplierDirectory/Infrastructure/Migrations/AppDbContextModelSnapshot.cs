@@ -659,7 +659,13 @@ namespace SupplierDirectory.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Details")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DetailsEn")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DisplayOrder")
@@ -674,6 +680,9 @@ namespace SupplierDirectory.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ServiceCategoryId")
                         .HasColumnType("int");
@@ -704,6 +713,9 @@ namespace SupplierDirectory.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -713,6 +725,9 @@ namespace SupplierDirectory.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ParentServiceCategoryId")
                         .HasColumnType("int");

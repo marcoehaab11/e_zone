@@ -25,6 +25,11 @@
                     <input asp-for="Name" class="form-control" placeholder="أدخل اسم الخدمة (مثال: صيانة أجهزة، استشارات فنية، شحن وتوصيل)..." />
                     <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
                 </div>
+                <div class="col-md-8 mb-3" dir="ltr">
+                    <label asp-for="NameEn" class="form-label fw-bold">Service name (English)</label>
+                    <input asp-for="NameEn" class="form-control" placeholder="Enter the English service name" />
+                    <span asp-validation-for="NameEn" class="text-danger small mt-1 d-block"></span>
+                </div>
                 <div class="col-md-4 mb-3">
                     <label asp-for="DisplayOrder" class="form-label fw-bold">ترتيب العرض</label>
                     <input asp-for="DisplayOrder" type="number" class="form-control" placeholder="0" />
@@ -45,11 +50,19 @@
                 <textarea asp-for="Description" class="form-control" rows="2" placeholder="وصف موجز للخدمة يظهر في القوائم والبطاقات..."></textarea>
                 <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
             </div>
+            <div class="mb-3" dir="ltr">
+                <label asp-for="DescriptionEn" class="form-label fw-bold">Short description (English)</label>
+                <textarea asp-for="DescriptionEn" class="form-control" rows="2" placeholder="Short English description shown in lists..."></textarea>
+            </div>
             
             <div class="mb-3">
                 <label asp-for="Details" class="form-label fw-bold">تفاصيل وشرح موسع للخدمة</label>
                 <textarea asp-for="Details" class="form-control" rows="5" placeholder="شرح مفصل عن كيفية تقديم الخدمة والمزايا والتفاصيل الفنية (اختياري)..."></textarea>
                 <span asp-validation-for="Details" class="text-danger small mt-1 d-block"></span>
+            </div>
+            <div class="mb-3" dir="ltr">
+                <label asp-for="DetailsEn" class="form-label fw-bold">Service details (English)</label>
+                <textarea asp-for="DetailsEn" class="form-control" rows="5" placeholder="Detailed English explanation (optional)..."></textarea>
             </div>
             
             <div class="form-check form-switch mt-3">

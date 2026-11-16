@@ -22,8 +22,8 @@ public sealed record CategoryDto(int Id, string Name, string? Description, strin
 
 public sealed record ProductCategoryDto(int Id, string Name, string? Description, string? ImageUrl, int? ParentCategoryId, string? ParentCategoryName = null, int? SubCategoriesCount = null);
 
-public sealed class ServiceRequest { [Required(ErrorMessage="اسم الخدمة مطلوب")] public string Name {get;set;}=""; public string? Description {get;set;} public string? Details {get;set;} public int DisplayOrder {get;set;} public int? ServiceCategoryId {get;set;} public bool IsActive {get;set;}=true; }
-public sealed class ServiceCategoryRequest { [Required(ErrorMessage="اسم تصنيف الخدمة مطلوب")] [StringLength(150)] public string Name {get;set;}=""; [StringLength(1000)] public string? Description {get;set;} public int? ParentServiceCategoryId {get;set;} public bool IsActive {get;set;}=true; }
+public sealed class ServiceRequest { [Required(ErrorMessage="اسم الخدمة مطلوب")] public string Name {get;set;}=""; [StringLength(200)] public string? NameEn {get;set;} public string? Description {get;set;} public string? DescriptionEn {get;set;} public string? Details {get;set;} public string? DetailsEn {get;set;} public int DisplayOrder {get;set;} public int? ServiceCategoryId {get;set;} public bool IsActive {get;set;}=true; }
+public sealed class ServiceCategoryRequest { [Required(ErrorMessage="اسم تصنيف الخدمة مطلوب")] [StringLength(150)] public string Name {get;set;}=""; [StringLength(150)] public string? NameEn {get;set;} [StringLength(1000)] public string? Description {get;set;} [StringLength(1000)] public string? DescriptionEn {get;set;} public int? ParentServiceCategoryId {get;set;} public bool IsActive {get;set;}=true; }
 
 public sealed record ProductDto(int Id, string Name, string? Description, string? Details, int? AreaId, string? AreaName, int? ProductCategoryId, string? ProductCategoryName, IEnumerable<object> Images);
 

@@ -43,8 +43,11 @@ public sealed class ProductImage : AuditableEntity
 public sealed class Service : AuditableEntity
 {
     public required string Name { get; set; }
+    public string? NameEn { get; set; }
     public string? Description { get; set; }
+    public string? DescriptionEn { get; set; }
     public string? Details { get; set; }
+    public string? DetailsEn { get; set; }
     public int DisplayOrder { get; set; }
     public int? ServiceCategoryId { get; set; }
     public ServiceCategory? ServiceCategory { get; set; }
@@ -56,7 +59,9 @@ public sealed class Service : AuditableEntity
 public sealed class ServiceCategory : AuditableEntity
 {
     public required string Name { get; set; }
+    public string? NameEn { get; set; }
     public string? Description { get; set; }
+    public string? DescriptionEn { get; set; }
     public int? ParentServiceCategoryId { get; set; }
     public ServiceCategory? ParentServiceCategory { get; set; }
     public ICollection<ServiceCategory> Children { get; set; } = [];

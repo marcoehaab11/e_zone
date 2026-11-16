@@ -1,11 +1,19 @@
+@using System.Globalization
+@inject SupplierDirectory.Infrastructure.Localization.IUiText T
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@(T.IsEnglish ? "ltr" : "rtl")">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Power Zone</title>
-    <!-- Bootstrap RTL CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    @if (T.IsEnglish)
+    {
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    }
+    else
+    {
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    }
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- Custom Styles -->
@@ -22,22 +30,22 @@
             
             <div class="list-group list-group-flush mt-3" id="sidebarMenu">
                 <a href="/dashboard" class="list-group-item sidebar-link">
-                    <i class="fa-solid fa-house"></i> الرئيسية
+                    <i class="fa-solid fa-house"></i> @T.Get("الرئيسية", "Dashboard")
                 </a>
                 
                 <!-- Suppliers -->
                 <a href="#suppliersSubmenu" data-bs-toggle="collapse" class="list-group-item sidebar-link has-submenu d-flex justify-content-between align-items-center">
-                    <div><i class="fa-solid fa-users"></i> إدارة الموردين</div>
+                    <div><i class="fa-solid fa-users"></i> @T.Get("إدارة الموردين", "Suppliers")</div>
                     <i class="fa-solid fa-chevron-down chevron-icon"></i>
                 </a>
                 <div class="collapse sidebar-submenu" id="suppliersSubmenu" data-bs-parent="#sidebarMenu">
-                    <a href="/dashboard/suppliers" class="list-group-item sidebar-link">قائمة الموردين</a>
-                    <a href="/dashboard/suppliers/create" class="list-group-item sidebar-link">إضافة مورد جديد</a>
+                    <a href="/dashboard/suppliers" class="list-group-item sidebar-link">@T.Get("قائمة الموردين", "Supplier list")</a>
+                    <a href="/dashboard/suppliers/create" class="list-group-item sidebar-link">@T.Get("إضافة مورد جديد", "Add supplier")</a>
                 </div>
 
                 <!-- Areas -->
                 <a href="#areasSubmenu" data-bs-toggle="collapse" class="list-group-item sidebar-link has-submenu d-flex justify-content-between align-items-center">
-                    <div><i class="fa-solid fa-map-location-dot"></i> إدارة المناطق</div>
+                    <div><i class="fa-solid fa-map-location-dot"></i> @T.Get("إدارة المناطق", "Areas")</div>
                     <i class="fa-solid fa-chevron-down chevron-icon"></i>
                 </a>
                 <div class="collapse sidebar-submenu" id="areasSubmenu" data-bs-parent="#sidebarMenu">
@@ -77,14 +85,14 @@
 
                 <!-- Services -->
                 <a href="#servicesSubmenu" data-bs-toggle="collapse" class="list-group-item sidebar-link has-submenu d-flex justify-content-between align-items-center">
-                    <div><i class="fa-solid fa-screwdriver-wrench"></i> إدارة خدماتنا</div>
+                    <div><i class="fa-solid fa-screwdriver-wrench"></i> @T.Get("إدارة خدماتنا", "Our services")</div>
                     <i class="fa-solid fa-chevron-down chevron-icon"></i>
                 </a>
                 <div class="collapse sidebar-submenu" id="servicesSubmenu" data-bs-parent="#sidebarMenu">
-                    <a href="/dashboard/services" class="list-group-item sidebar-link">قائمة الخدمات</a>
-                    <a href="/dashboard/services/create" class="list-group-item sidebar-link">إضافة خدمة</a>
-                    <a href="/dashboard/service-categories" class="list-group-item sidebar-link">تصنيفات الخدمات</a>
-                    <a href="/dashboard/service-categories/create" class="list-group-item sidebar-link">إضافة تصنيف خدمة</a>
+                    <a href="/dashboard/services" class="list-group-item sidebar-link">@T.Get("قائمة الخدمات", "Service list")</a>
+                    <a href="/dashboard/services/create" class="list-group-item sidebar-link">@T.Get("إضافة خدمة", "Add service")</a>
+                    <a href="/dashboard/service-categories" class="list-group-item sidebar-link">@T.Get("تصنيفات الخدمات", "Service categories")</a>
+                    <a href="/dashboard/service-categories/create" class="list-group-item sidebar-link">@T.Get("إضافة تصنيف خدمة", "Add service category")</a>
                 </div>
 
                 <!-- Ads -->
@@ -106,6 +114,13 @@
                 <a href="/dashboard/users" class="list-group-item sidebar-link">
                     <i class="fa-solid fa-users-cog"></i> إدارة المستخدمين
                 </a>
+
+                <form method="post" action="/culture/set" class="m-0 px-3 py-2">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                    <input type="hidden" name="culture" value="@(T.IsEnglish ? "ar" : "en")" />
+                    <button type="submit" class="btn btn-outline-light btn-sm w-100">@(T.IsEnglish ? "العربية" : "English")</button>
+                </form>
 
                 <!-- Sidebar Logout -->
                 <form method="post" action="/logout" class="m-0 mt-auto border-top border-secondary">
